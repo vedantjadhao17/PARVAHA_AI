@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy-900: #0b1420;
+  --color-navy-800: #0f1b2b;
+  --color-navy-700: #1a2c42;
+  --color-navy-border: #233753;
+  
+  --color-status-green: #10b981;
+  --color-status-amber: #f59e0b;
+  --color-status-orange: #f97316;
+  --color-status-red: #ef4444;
+}
+
+body {
+  background-color: var(--color-navy-900);
+  color: white;
+}
+
+.dark-map-tiles {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
