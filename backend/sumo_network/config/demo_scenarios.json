@@ -1,0 +1,48 @@
+{
+  "scenarios": [
+    {
+      "scenario_id": "NORMAL",
+      "description": "Baseline free-flowing to moderate mixed traffic with realistic signal delays.",
+      "sumocfg": "demo_1_normal.sumocfg",
+      "route_file": "demo_1_normal.rou.xml",
+      "seed": 42,
+      "duration": 600,
+      "demand_parameters": "Constant ~1000 vph total corridor demand",
+      "incident_parameters": null,
+      "calibration_notes": "Produces ~160 vehicles, 4.6 km/h avg, max Q 150m. Visually identifiable as normal operating regime."
+    },
+    {
+      "scenario_id": "RISING_CONGESTION",
+      "description": "Demand increases temporally across 3 bands to demonstrate queue growth and risk emergence.",
+      "sumocfg": "demo_2_rising.sumocfg",
+      "route_file": "demo_2_rising.rou.xml",
+      "seed": 42,
+      "duration": 600,
+      "demand_parameters": "0-200s: ~1000vph | 200-400s: ~1600vph | 400-600s: ~2900vph",
+      "incident_parameters": null,
+      "calibration_notes": "Produces ~240 vehicles, speed drops to 3.0 km/h, max Q 165m. Queue visibly accumulates later in the simulation."
+    },
+    {
+      "scenario_id": "SPILLBACK",
+      "description": "Sustained high-volume traffic exceeding intersection clearance capacity.",
+      "sumocfg": "demo_3_spillback.sumocfg",
+      "route_file": "demo_3_spillback.rou.xml",
+      "seed": 42,
+      "duration": 600,
+      "demand_parameters": "Constant ~3400 vph total corridor demand",
+      "incident_parameters": null,
+      "calibration_notes": "Produces ~380+ inserted vehicles with significant buffering. Speed ~3.3 km/h with extensive continuous queuing (max Q 245m)."
+    },
+    {
+      "scenario_id": "INCIDENT_STRESS",
+      "description": "Physical breakdown in lane 0 feeding Sancheti to Shivaji Road (J2) causing localized lane restriction.",
+      "sumocfg": "demo_4_incident.sumocfg",
+      "route_file": "demo_4_incident.rou.xml",
+      "seed": 42,
+      "duration": 600,
+      "demand_parameters": "Constant ~1000 vph total corridor demand",
+      "incident_parameters": "Stationary vehicle at 229904828#1_0 from 0s to 500s",
+      "calibration_notes": "Similar base demand to NORMAL but bottleneck forces lane changing and reduces physical throughput. Max Q 155m."
+    }
+  ]
+}

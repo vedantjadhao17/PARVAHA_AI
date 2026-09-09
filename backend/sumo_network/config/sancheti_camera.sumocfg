@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:noNamespaceSchemaLocation="https://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+    <input>
+        <net-file value="../network/sancheti_core.net.xml"/>
+        <route-files value="../routes/camera_demo.rou.xml"/>
+        <additional-files value="../additional/sancheti_detectors.add.xml"/>
+    </input>
+
+    <time>
+        <begin value="0"/>
+        <end value="600"/>
+        <step-length value="0.5"/>
+    </time>
+
+    <processing>
+        <lateral-resolution value="0.25"/>
+        <ignore-route-errors value="false"/>
+        <time-to-teleport value="600"/>
+        <collision.action value="warn"/>
+    </processing>
+
+    <routing>
+        <device.rerouting.probability value="0"/>
+    </routing>
+
+    <report>
+        <verbose value="true"/>
+        <no-step-log value="true"/>
+        <duration-log.statistics value="true"/>
+    </report>
+
+    <output>
+        <summary-output value="../outputs/camera_summary.xml"/>
+        <tripinfo-output value="../outputs/camera_tripinfo.xml"/>
+        <statistic-output value="../outputs/camera_statistics.xml"/>
+        <queue-output value="../outputs/camera_queue.xml"/>
+    </output>
+</configuration>

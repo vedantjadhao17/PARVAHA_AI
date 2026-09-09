@@ -29,7 +29,7 @@ interface NetworkGeometry {
 interface Props {
   selectedJunction: string | null;
   onJunctionSelect: (id: string) => void;
-  junctionOrder: { junction_id: string; label: string }[];
+  junctionOrder: { junction_id: string; label: string; tls_id?: string }[];
 }
 
 // ─── Color helpers ───────────────────────────────────────────────────────────
@@ -40,6 +40,13 @@ const speedToColor = (speedMps: number) => {
   if (kmh > 8)  return '#facc15'; // yellow — slowing
   if (kmh > 2)  return '#f97316'; // orange — queued
   return '#ef4444';                // red — stopped
+};
+
+const deriveSimplifiedSignal = (rawState?: string) => {
+  if (!rawState) return 'UNKNOWN';
+  if (rawState.includes('y') || rawState.includes('Y')) return 'YELLOW';
+  if (rawState.includes('g') || rawState.includes('G')) return 'GREEN';
+  return 'RED';
 };
 
 const signalColor = (state: string) => {
@@ -58,6 +65,34 @@ const queueColor = (queueM: number) => {
 
 // ─── Auto-fit bounds on first geometry load ───────────────────────────────
 
+
+const FlyToSelected = ({ markers, selected }: { markers: any[], selected: string | null }) => {
+  const map = useMap();
+  const prevSelected = useRef(selected);
+
+  useEffect(() => {
+    if (selected !== prevSelected.current) {
+      if (selected) {
+        const target = markers.find(m => m.id === selected);
+        if (target) {
+          map.flyTo([target.lat, target.lon], 18, { animate: true, duration: 1 });
+        }
+      } else if (markers.length > 0) {
+        // Re-fit all if deselected
+        let minLat = 90, maxLat = -90, minLon = 180, maxLon = -180;
+        markers.forEach(j => {
+          if (j.lat < minLat) minLat = j.lat;
+          if (j.lat > maxLat) maxLat = j.lat;
+          if (j.lon < minLon) minLon = j.lon;
+          if (j.lon > maxLon) maxLon = j.lon;
+        });
+        map.flyToBounds([[minLat, minLon], [maxLat, maxLon]], { padding: [40, 40], animate: true });
+      }
+      prevSelected.current = selected;
+    }
+  }, [selected, markers, map]);
+  return null;
+};
 const AutoFit = ({ bounds }: { bounds: L.LatLngBoundsExpression | null }) => {
   const map = useMap();
   const fitted = useRef(false);
@@ -88,16 +123,6 @@ export const LeafletLiveMap = ({ selectedJunction, onJunctionSelect, junctionOrd
       .catch(() => setGeoError(true));
   }, []);
 
-  // Build Leaflet bounds from network extent
-  const bounds = useMemo<L.LatLngBoundsExpression | null>(() => {
-    if (!geometry?.bounds_lonlat) return null;
-    const { minLon, minLat, maxLon, maxLat } = geometry.bounds_lonlat;
-    return [
-      [minLat, minLon],
-      [maxLat, maxLon],
-    ];
-  }, [geometry]);
-
   // Lane polylines (lon/lat → Leaflet [lat,lon])
   const lanePolylines = useMemo(() => {
     if (!geometry?.lanes) return [];
@@ -114,7 +139,7 @@ export const LeafletLiveMap = ({ selectedJunction, onJunctionSelect, junctionOrd
     if (!geometry?.junctions) return [];
     return junctionOrder
       .map((jCfg) => {
-        const geoNode = geometry.junctions.find((g) => g.id === jCfg.junction_id);
+        const geoNode = geometry.junctions.find((g) => g.id === (jCfg.tls_id || jCfg.junction_id));
         const liveData = liveJunctions[jCfg.junction_id];
         if (!geoNode?.lon || !geoNode?.lat || !liveData) return null;
         return {
@@ -122,16 +147,39 @@ export const LeafletLiveMap = ({ selectedJunction, onJunctionSelect, junctionOrd
           label: jCfg.label,
           lat: geoNode.lat,
           lon: geoNode.lon,
-          signal: liveData.signal_state,
+          raw_state: liveData.raw_state,
+          signal: deriveSimplifiedSignal(liveData.raw_state),
+          current_phase: liveData.current_phase,
+          remaining_time: liveData.remaining_time,
+          tls_id: liveData.tls_id,
           queue: liveData.queue_m,
           vehicles: liveData.active_vehicles,
+          halting: liveData.halting_vehicles,
         };
       })
       .filter(Boolean) as {
         id: string; label: string; lat: number; lon: number;
-        signal: string; queue: number; vehicles: number;
+        signal: string; raw_state: string; current_phase: number; remaining_time: number; tls_id: string; queue: number; vehicles: number; halting: number;
       }[];
   }, [geometry, junctionOrder, liveJunctions]);
+
+  // Build Leaflet bounds specifically focusing on our target junctions!
+  const bounds = useMemo<L.LatLngBoundsExpression | null>(() => {
+    if (junctionMarkers.length === 0) return null;
+    let minLat = 90, maxLat = -90, minLon = 180, maxLon = -180;
+
+    junctionMarkers.forEach(j => {
+      if (j.lat < minLat) minLat = j.lat;
+      if (j.lat > maxLat) maxLat = j.lat;
+      if (j.lon < minLon) minLon = j.lon;
+      if (j.lon > maxLon) maxLon = j.lon;
+    });
+
+    return [
+      [minLat, minLon],
+      [maxLat, maxLon],
+    ];
+  }, [junctionMarkers]);
 
   if (geoError) {
     return (
@@ -173,7 +221,7 @@ export const LeafletLiveMap = ({ selectedJunction, onJunctionSelect, junctionOrd
         />
 
         {/* Auto-fit on first load */}
-        <AutoFit bounds={bounds} />
+        {/* AutoFit disabled */}        <FlyToSelected markers={junctionMarkers} selected={selectedJunction} />
 
         {/* Road network lane shapes */}
         {lanePolylines.map((lane) => (
@@ -221,15 +269,16 @@ export const LeafletLiveMap = ({ selectedJunction, onJunctionSelect, junctionOrd
               eventHandlers={{ click: () => onJunctionSelect(j.id) }}
             >
               <Tooltip direction="top" offset={[0, -8]} permanent={false}>
-                <div className="text-xs">
-                  <div className="font-bold">{j.label}</div>
-                  <div>Q: {j.queue.toFixed(0)}m · {j.vehicles} veh</div>
-                  <div
-                    style={{ color: sigCol }}
-                    className="font-semibold"
-                  >
-                    {j.signal}
+                <div className="text-xs space-y-0.5">
+                  <div className="font-bold border-b border-gray-600 pb-0.5 mb-0.5">{j.label} ({j.tls_id})</div>
+                  <div>Q: {j.queue.toFixed(0)}m · {j.halting} halting / {j.vehicles} veh</div>
+                  <div className="flex gap-2 justify-between">
+                    <span style={{ color: sigCol }} className="font-semibold">
+                      Phase {j.current_phase} [{j.signal}]
+                    </span>
+                    <span className="text-gray-400 font-mono">T-{j.remaining_time.toFixed(0)}s</span>
                   </div>
+                  <div className="font-mono text-[10px] text-gray-500 tracking-widest">{j.raw_state}</div>
                 </div>
               </Tooltip>
             </CircleMarker>

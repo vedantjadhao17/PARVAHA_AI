@@ -23,11 +23,15 @@ interface LaneShape {
 interface Props {
   junctionId: string;
   junctionName: string;
-  queueM: number;
-  activeVehicles: number;
-  signalState: string;
-  speed: string;
+  queueM: number | null | undefined;
+  haltingVehicles?: number;
+  activeVehicles: number | null | undefined;
+  rawState?: string;
+  signalState?: string;
+  speed: string | null | undefined;
   occupancy: string;
+  predictedQueueM?: number | null;
+  forecastRisk?: string;
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -77,10 +81,14 @@ export const SimFeedPanel = ({
   junctionId,
   junctionName: _junctionName,
   queueM,
-  activeVehicles,
+  haltingVehicles,
+  /* activeVehicles */
+  rawState,
   signalState,
   speed,
-  occupancy,
+  /* occupancy */
+  predictedQueueM,
+  forecastRisk,
 }: Props) => {
   const { state } = useWebSocket();
   const [camera, setCamera] = useState<CameraConfig | null>(null);
@@ -88,7 +96,8 @@ export const SimFeedPanel = ({
   const [cameraError, setCameraError] = useState(false);
 
   const vehicles: VehicleState[] = state?.vehicles ?? [];
-  const sigColor = signalGlowColor(signalState);
+  const sigColor = signalGlowColor(signalState || 'UNKNOWN');
+  console.log("SimFeedPanel render:", { predictedQueueM, queueM });
 
   // Fetch camera config whenever junction changes
   useEffect(() => {
@@ -206,20 +215,22 @@ export const SimFeedPanel = ({
         {/* 4-metric grid attached to bottom of map */}
         <div className="grid grid-cols-4 bg-navy-900 border-t border-navy-border">
           <div className="p-3 text-center border-r border-navy-border/50">
-            <div className="text-[10px] text-gray-400 mb-1">Vehicles</div>
-            <div className="text-xl font-bold text-status-green">{activeVehicles}</div>
+            <div className="text-[10px] text-gray-400 mb-1">EST. QUEUE</div>
+            <div className="text-xl font-bold text-status-red">{queueM != null ? `${queueM.toFixed(0)}m` : 'N/A'}</div>
+            <div className="text-[9px] text-gray-500">{haltingVehicles != null ? haltingVehicles : 'N/A'} halting veh</div>
           </div>
           <div className="p-3 text-center border-r border-navy-border/50">
-            <div className="text-[10px] text-gray-400 mb-1">Queue</div>
-            <div className="text-xl font-bold text-status-red">{queueM.toFixed(0)}</div>
+            <div className="text-[10px] text-status-amber mb-1 font-bold">FORECAST +5m</div>
+            <div className="text-xl font-bold text-status-amber">{predictedQueueM != null ? `${predictedQueueM.toFixed(0)}m` : 'N/A'}</div>
+            <div className="text-[9px] text-gray-500">Risk: {forecastRisk || 'LOW'}</div>
           </div>
           <div className="p-3 text-center border-r border-navy-border/50">
-            <div className="text-[10px] text-gray-400 mb-1">Speed</div>
-            <div className="text-xl font-bold text-blue-400">{speed} <span className="text-xs font-normal">km/h</span></div>
+            <div className="text-[10px] text-gray-400 mb-1">Raw Signal State</div>
+            <div className="text-sm font-mono text-gray-300 truncate px-2" style={{ color: sigColor }}>{rawState || 'N/A'}</div>
           </div>
           <div className="p-3 text-center">
-            <div className="text-[10px] text-gray-400 mb-1">Occupancy</div>
-            <div className="text-xl font-bold text-status-amber">{occupancy}%</div>
+            <div className="text-[10px] text-gray-400 mb-1">Avg Speed</div>
+            <div className="text-xl font-bold text-blue-400">{speed != null && speed !== 'N/A' ? speed : 'N/A'} <span className="text-xs font-normal">km/h</span></div>
           </div>
         </div>
       </div>

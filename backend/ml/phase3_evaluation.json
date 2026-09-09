@@ -1,0 +1,24 @@
+{
+  "baseline": {
+    "demand": "congestion",
+    "pravaha_enabled": false,
+    "duration_s": 600,
+    "interventions": 0,
+    "avg_queue_m": 11.458333333333336,
+    "max_queue_m": 55.0,
+    "avg_speed_kmh": 6.871561111111106,
+    "queue_improvement_pct": 0.0,
+    "speed_improvement_pct": 0.0
+  },
+  "pravaha": {
+    "demand": "congestion",
+    "pravaha_enabled": true,
+    "duration_s": 600,
+    "interventions": 0,
+    "avg_queue_m": 11.458333333333336,
+    "max_queue_m": 55.0,
+    "avg_speed_kmh": 6.871561111111106,
+    "queue_improvement_pct": 0.0,
+    "speed_improvement_pct": 0.0
+  }
+}

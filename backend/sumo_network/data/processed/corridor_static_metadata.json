@@ -1,0 +1,118 @@
+{
+  "corridor_id": "pravaha_shivajinagar_three_signal_corridor",
+  "storage_model": "length * lanes / avg_vehicle_spacing",
+  "avg_vehicle_spacing_m": 7.0,
+  "junctions": {
+    "J1_SAN": {
+      "label": "Sancheti Chowk",
+      "downstream_junction_id": "J2_SJM",
+      "downstream_edges": [
+        "229904828#0",
+        "229904828#1"
+      ],
+      "approaches": {
+        "SANGAM": {
+          "edges": [
+            "195712757",
+            "661187151#0"
+          ],
+          "length_m": 35.74,
+          "effective_lanes": 3,
+          "usable_storage_vehicles": 20.3
+        },
+        "GANESHKHIND": {
+          "edges": [
+            "173045977#1",
+            "1298622049"
+          ],
+          "length_m": 97.19,
+          "effective_lanes": 2,
+          "usable_storage_vehicles": 29.5
+        }
+      }
+    },
+    "J2_SJM": {
+      "label": "Shivaji Road\u2013JM Path",
+      "downstream_junction_id": "J3_SAP",
+      "downstream_edges": [
+        "342557170#0",
+        "342557171#0"
+      ],
+      "approaches": {
+        "FROM_SAN": {
+          "edges": [
+            "229904828#1",
+            "229904828#2"
+          ],
+          "length_m": 43.33,
+          "effective_lanes": 3,
+          "usable_storage_vehicles": 31.3
+        },
+        "SHIVAJI_SIDE": {
+          "edges": [
+            "215804435#1",
+            "342557172#1"
+          ],
+          "length_m": 57.04,
+          "effective_lanes": 1,
+          "usable_storage_vehicles": 15.8
+        }
+      }
+    },
+    "J3_SAP": {
+      "label": "Shivaji Road\u2013Apte Path",
+      "downstream_junction_id": null,
+      "downstream_edges": [
+        "238836092#0",
+        "817900771#0"
+      ],
+      "approaches": {
+        "FROM_J2": {
+          "edges": [
+            "342557170#0",
+            "342557171#0"
+          ],
+          "length_m": 147.63,
+          "effective_lanes": 1,
+          "usable_storage_vehicles": 48.3
+        },
+        "NORTH_SHIVAJI": {
+          "edges": [
+            "817900788#0",
+            "817900789#0"
+          ],
+          "length_m": 74.65,
+          "effective_lanes": 1,
+          "usable_storage_vehicles": 34.1
+        },
+        "RANADE": {
+          "edges": [
+            "1359564185#0",
+            "1359564185#1"
+          ],
+          "length_m": 38.1,
+          "effective_lanes": 1,
+          "usable_storage_vehicles": 9.7
+        },
+        "APTE": {
+          "edges": [
+            "-290390083#1",
+            "-1160332074#1"
+          ],
+          "length_m": 42.38,
+          "effective_lanes": 1,
+          "usable_storage_vehicles": 9.0
+        },
+        "BAHIRAT": {
+          "edges": [
+            "-68573854#3",
+            "-68573854#1"
+          ],
+          "length_m": 72.55,
+          "effective_lanes": 1,
+          "usable_storage_vehicles": 16.4
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,74 @@
+[
+  {
+    "action": "APPROVE",
+    "recommendation_id": "REC_123",
+    "timestamp": 1787947990.171029,
+    "reason": "Looks good"
+  },
+  {
+    "action": "REJECT",
+    "recommendation_id": "REC_456",
+    "timestamp": 1787947990.1761038,
+    "reason": "Not enough improvement"
+  },
+  {
+    "action": "APPROVE",
+    "recommendation_id": "REC_123",
+    "timestamp": 1787948271.745588,
+    "reason": "Looks good"
+  },
+  {
+    "action": "REJECT",
+    "recommendation_id": "REC_456",
+    "timestamp": 1787948271.747765,
+    "reason": "Not enough improvement"
+  },
+  {
+    "action": "APPROVE",
+    "recommendation_id": "REC_123",
+    "timestamp": 1787948797.41109,
+    "reason": "Looks good"
+  },
+  {
+    "action": "REJECT",
+    "recommendation_id": "REC_456",
+    "timestamp": 1787948797.413259,
+    "reason": "Not enough improvement"
+  },
+  {
+    "action": "APPROVE",
+    "recommendation_id": "REC_123",
+    "timestamp": 1787948821.728804,
+    "reason": "Looks good"
+  },
+  {
+    "action": "REJECT",
+    "recommendation_id": "REC_456",
+    "timestamp": 1787948821.7310028,
+    "reason": "Not enough improvement"
+  },
+  {
+    "action": "APPROVE",
+    "recommendation_id": "REC_123",
+    "timestamp": 1788026150.191932,
+    "reason": "Looks good"
+  },
+  {
+    "action": "REJECT",
+    "recommendation_id": "REC_456",
+    "timestamp": 1788026150.1941319,
+    "reason": "Not enough improvement"
+  },
+  {
+    "action": "APPROVE",
+    "recommendation_id": "REC_123",
+    "timestamp": 1788026155.314856,
+    "reason": "Looks good"
+  },
+  {
+    "action": "REJECT",
+    "recommendation_id": "REC_456",
+    "timestamp": 1788026155.316843,
+    "reason": "Not enough improvement"
+  }
+]

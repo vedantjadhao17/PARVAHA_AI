@@ -1,0 +1,27 @@
+{
+  "snapshots": [
+    {
+      "time_s": 51.0,
+      "queue": 0,
+      "forecast": 0,
+      "risk": "SAFE",
+      "capacity_ratio": 0
+    },
+    {
+      "time_s": 251.0,
+      "queue": 0,
+      "forecast": 0,
+      "risk": "SAFE",
+      "capacity_ratio": 0
+    }
+  ],
+  "high_risk_snapshot": null,
+  "recommendation": null,
+  "approval_result": null,
+  "rollback_result": null,
+  "signal_states": {
+    "before": null,
+    "after": null,
+    "rolled_back": null
+  }
+}

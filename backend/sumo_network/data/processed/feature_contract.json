@@ -1,0 +1,34 @@
+{
+  "dataset": "sancheti_ml_seed_dataset.csv",
+  "status": "simulation seed dataset; not field calibrated",
+  "sample_period_s": 5,
+  "history_window_s": 60,
+  "prediction_horizon_s": 90,
+  "group_split_key": "simulation_id",
+  "label": {
+    "name": "severe_congestion_next_90s",
+    "positive_when": "future max queue >= 30.0 m OR future max halting >= 8"
+  },
+  "regression_target": "future_max_queue_90s_m",
+  "features": [
+    "vehicle_count",
+    "halting_count",
+    "mean_speed_mps",
+    "occupancy_pct",
+    "queue_length_m",
+    "queue_growth_60s_m",
+    "speed_change_60s_mps",
+    "occupancy_change_60s_pct",
+    "halting_change_60s",
+    "signal_phase_index",
+    "is_green",
+    "phase_remaining_s",
+    "time_since_last_green_s",
+    "downstream_vehicle_count",
+    "downstream_mean_speed_mps",
+    "downstream_occupancy_pct",
+    "outflow_vehicles_5s",
+    "network_running_vehicles",
+    "demand_scale"
+  ]
+}

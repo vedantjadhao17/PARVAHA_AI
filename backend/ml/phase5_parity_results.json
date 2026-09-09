@@ -1,0 +1,89 @@
+{
+  "verdict": "PASS",
+  "checks": [
+    {
+      "t": 30.0,
+      "tid": "cluster_13546492148_1838721956",
+      "offline": {
+        "queue_length_m": 0.0,
+        "vehicle_count": 0,
+        "avg_speed_kmh": 0.0
+      },
+      "live": {
+        "queue_length_m": 0.0,
+        "vehicle_count": 0,
+        "avg_speed_kmh": 0.0,
+        "queue_minus_5": 0.0,
+        "queue_minus_10": 0.0,
+        "queue_minus_15": 0.0,
+        "queue_minus_20": 0.0,
+        "queue_slope": 0.0
+      },
+      "queue_match": true,
+      "speed_match": true
+    },
+    {
+      "t": 60.0,
+      "tid": "cluster_13546492148_1838721956",
+      "offline": {
+        "queue_length_m": 0.0,
+        "vehicle_count": 0,
+        "avg_speed_kmh": 0.0
+      },
+      "live": {
+        "queue_length_m": 0.0,
+        "vehicle_count": 0,
+        "avg_speed_kmh": 0.0,
+        "queue_minus_5": 0.0,
+        "queue_minus_10": 0.0,
+        "queue_minus_15": 0.0,
+        "queue_minus_20": 0.0,
+        "queue_slope": 0.0
+      },
+      "queue_match": true,
+      "speed_match": true
+    },
+    {
+      "t": 90.0,
+      "tid": "cluster_13546492148_1838721956",
+      "offline": {
+        "queue_length_m": 0.0,
+        "vehicle_count": 0,
+        "avg_speed_kmh": 0.0
+      },
+      "live": {
+        "queue_length_m": 0.0,
+        "vehicle_count": 0,
+        "avg_speed_kmh": 0.0,
+        "queue_minus_5": 0.0,
+        "queue_minus_10": 0.0,
+        "queue_minus_15": 0.0,
+        "queue_minus_20": 0.0,
+        "queue_slope": 0.0
+      },
+      "queue_match": true,
+      "speed_match": true
+    },
+    {
+      "t": 120.0,
+      "tid": "cluster_13546492148_1838721956",
+      "offline": {
+        "queue_length_m": 10.0,
+        "vehicle_count": 2,
+        "avg_speed_kmh": 0.0
+      },
+      "live": {
+        "queue_length_m": 10.0,
+        "vehicle_count": 2,
+        "avg_speed_kmh": 0.0,
+        "queue_minus_5": 10.0,
+        "queue_minus_10": 10.0,
+        "queue_minus_15": 10.0,
+        "queue_minus_20": 10.0,
+        "queue_slope": 0.0
+      },
+      "queue_match": true,
+      "speed_match": true
+    }
+  ]
+}

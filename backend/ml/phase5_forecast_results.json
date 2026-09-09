@@ -1,0 +1,103 @@
+{
+  "aggregate": {
+    "n": 612,
+    "model_rmse": 16.55782948939813,
+    "model_mae": 8.126032989782592,
+    "model_mean_error": 0.11959566048717772,
+    "model_median_ae": 1.3636070489883423,
+    "model_max_ae": 111.4613037109375,
+    "model_r2": 0.6968634517241084,
+    "naive_rmse": 26.009833484828324,
+    "naive_mae": 11.397058823529411,
+    "rmse_improvement_pct": 36.340117290422484,
+    "mae_improvement_pct": 28.700613767068862
+  },
+  "per_junction": {
+    "J1_SAN": {
+      "junction_id": "cluster_13546492148_1838721956",
+      "name": "J1_SAN",
+      "n": 204,
+      "model_rmse": 8.819198171712596,
+      "model_mae": 5.146727240553089,
+      "model_mean_error": 0.891922229645299,
+      "naive_rmse": 8.179961167749047
+    },
+    "J2_SJM": {
+      "junction_id": "cluster_2061304035_245647208",
+      "name": "J2_SJM",
+      "n": 204,
+      "model_rmse": 11.713506641675977,
+      "model_mae": 6.344712027129443,
+      "model_mean_error": -2.7517344250581135,
+      "naive_rmse": 14.348601079588786
+    },
+    "J3_SAP": {
+      "junction_id": "cluster_245647168_3238255150_3495323634",
+      "name": "J3_SAP",
+      "n": 204,
+      "model_rmse": 24.647528435188402,
+      "model_mae": 12.886659701665243,
+      "model_mean_error": 2.218599176874348,
+      "naive_rmse": 41.91348465683128
+    }
+  },
+  "per_scenario": {
+    "corridor_camera": {
+      "n": 99,
+      "model_rmse": 33.5661466081193,
+      "model_mae": 23.34797118890165,
+      "naive_rmse": 57.31359773080455
+    },
+    "sancheti_camera": {
+      "n": 99,
+      "model_rmse": 10.938764779462895,
+      "model_mae": 3.4788547320799394,
+      "naive_rmse": 0.0
+    },
+    "sancheti_congestion": {
+      "n": 207,
+      "model_rmse": 14.581792583435487,
+      "model_mae": 9.830965045551602,
+      "naive_rmse": 20.71488064636716
+    },
+    "sancheti_smoke": {
+      "n": 207,
+      "model_rmse": 1.363607048988342,
+      "model_mae": 1.3636070489883423,
+      "naive_rmse": 0.0
+    }
+  },
+  "error_by_magnitude": {
+    "0-10m": {
+      "n": 409,
+      "rmse": 7.9593488686318254,
+      "mae": 3.5809263340709845,
+      "mean_error": -3.569895215897222
+    },
+    "10-25m": {
+      "n": 80,
+      "rmse": 9.112614023511922,
+      "mae": 7.220312064886093,
+      "mean_error": -0.9514602243900299
+    },
+    "25-50m": {
+      "n": 59,
+      "rmse": 16.750997693427813,
+      "mae": 13.77803405052272,
+      "mean_error": 2.970610442744978
+    },
+    "50-100m": {
+      "n": 42,
+      "rmse": 30.345756340509798,
+      "mae": 22.72819623493013,
+      "mean_error": 16.18835517338344
+    },
+    ">100m": {
+      "n": 22,
+      "rmse": 60.302891139823934,
+      "mae": 52.8827319578691,
+      "mean_error": 34.28270782123912
+    }
+  },
+  "note": "IMPORTANT: test split is temporal (last 20% of each scenario), NOT scenario-level separation"
+}

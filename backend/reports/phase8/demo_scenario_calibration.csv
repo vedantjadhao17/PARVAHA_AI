@@ -1,0 +1,5 @@
+scenario_id,simulation_time,inserted_vehicles,active_vehicles,halting_vehicles,estimated_queue_m,avg_speed_kmh
+demo_1_normal,600,627,28,22,110.0,4.75
+demo_2_rising,600,825,226,42,210.0,2.57
+demo_3_spillback,600,863,264,47,235.0,1.93
+demo_4_incident,600,628,29,23,115.0,4.88

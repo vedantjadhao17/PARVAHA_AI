@@ -47,7 +47,7 @@ export const Analytics = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.data.map((row, i) => (
+                  {(data.data || []).map((row, i) => (
                     <tr key={i} className="border-b border-navy-border hover:bg-navy-700/50">
                       <td className="px-6 py-4 font-mono text-white">{row.time}</td>
                       <td className="px-6 py-4 font-mono">{row.speed}</td>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2026-08-27T20:01:44.826403+09:00 by Eclipse SUMO duarouter 1.27.1
+<duarouterConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/duarouterConfiguration.xsd">
+
+    <input>
+        <net-file value="/workspace/scratch/29d214e3b756/pravaha-sancheti-sumo/network/sancheti_core.net.xml"/>
+        <route-files value="/workspace/scratch/29d214e3b756/pravaha-sancheti-sumo/routes/smoke.trips.xml"/>
+    </input>
+
+    <output>
+        <output-file value="/workspace/scratch/29d214e3b756/pravaha-sancheti-sumo/routes/smoke.trips.xml.tmp"/>
+        <alternatives-output value="NUL"/>
+        <write-trips value="true"/>
+    </output>
+
+    <processing>
+        <remove-loops value="true"/>
+        <routing-threads value="4"/>
+    </processing>
+
+    <time>
+        <begin value="0.0"/>
+        <end value="300.0"/>
+    </time>
+
+    <report>
+        <no-warnings value="true"/>
+        <ignore-errors value="true"/>
+        <no-step-log value="true"/>
+    </report>
+
+</duarouterConfiguration>

@@ -8,12 +8,20 @@ from typing import Dict, Any, List
 
 import xgboost as xgb
 import traci
+from app.sim.traci_lock import traci_lock
 
-from pravaha.spillback_engine import SpillbackEngine, ForecastResult, SpillbackResult
-from pravaha.candidate_generator import CandidateGenerator
-from pravaha.safety_gate import SafetyGate
-from pravaha.evaluator import Evaluator
-from pravaha.decision_selector import DecisionSelector
+from app.sim.spillback import SpillbackEngine
+from app.sim.corridor_decision_engine import CorridorDecisionEngine
+from app.sim.corridor_state import CorridorState, CorridorJunctionState
+from app.sim.forecast import QueueForecaster
+from collections import deque
+import threading
+import tempfile
+import traci
+
+
+
+
 from app.db.database import SessionLocal, Alert, OperatorLog
 from app.sim.feature_extractor import LiveFeatureExtractor
 from app.sim.network_geometry import get_net
@@ -23,37 +31,47 @@ logger = logging.getLogger(__name__)
 class SimulationManager:
     def __init__(self, project_dir: Path):
         self.project_dir = project_dir
-        
+
         # Paths
-        self.sumocfg_path = self.project_dir / "config" / "corridor_camera.sumocfg"
-        self.static_meta_path = self.project_dir / "data" / "processed" / "corridor_static_metadata.json"
-        self.signal_meta_path = self.project_dir / "data" / "processed" / "corridor_signal_metadata.json"
-        self.junction_cfg_path = self.project_dir / "config" / "corridor_junctions.json"
+        self.sumocfg_path = Path("/Users/vedantjadhao/Documents/veda/asteria-command-center/backend/sumo_network/config/demo_2_rising.sumocfg")
+        self.static_meta_path = Path("/Users/vedantjadhao/Documents/veda/asteria-command-center/backend/sumo_network/config/corridor_static_meta.json")
+        self.signal_meta_path = Path("/Users/vedantjadhao/Documents/veda/asteria-command-center/backend/sumo_network/config/corridor_signal_meta.json")
+        self.junction_cfg_path = Path("/Users/vedantjadhao/Documents/veda/asteria-command-center/backend/sumo_network/config/corridor_junctions.json")
+        self.static_meta_path = Path("/Users/vedantjadhao/Documents/veda/asteria-command-center/backend/sumo_network/config/corridor_static_meta.json")
+        self.signal_meta_path = Path("/Users/vedantjadhao/Documents/veda/asteria-command-center/backend/sumo_network/config/corridor_signal_meta.json")
         self.policy_cfg_path = self.project_dir / "config" / "corridor_policy.json"
-        
+
         # Load XGBoost models
-        self.model_5m = xgb.Booster()
-        self.model_5m.load_model(str(self.project_dir / "models" / "queue_5m.json"))
-        
-        self.model_10m = xgb.Booster()
-        self.model_10m.load_model(str(self.project_dir / "models" / "queue_10m.json"))
-        
+
+
+
+        self.forecast_model = xgb.Booster()
+        self.forecast_model.load_model(str(self.project_dir / "ml" / "models" / "queue_forecast_model.json"))
+
         with open(self.junction_cfg_path, 'r') as f:
             self.config = json.load(f)
-        
+
         # Initialize Decision Engine components
-        self.spillback_engine = SpillbackEngine(self.static_meta_path)
-        self.candidate_generator = CandidateGenerator(self.junction_cfg_path, self.signal_meta_path)
-        self.safety_gate = SafetyGate(self.junction_cfg_path, self.signal_meta_path)
-        self.evaluator = Evaluator(self.junction_cfg_path, self.static_meta_path, self.policy_cfg_path if self.policy_cfg_path.exists() else None)
-        self.decision_selector = DecisionSelector(self.policy_cfg_path if self.policy_cfg_path.exists() else None)
-        
+        self.spillback_engine = SpillbackEngine()
+        self.decision_engine = CorridorDecisionEngine(sumocfg_path=self.sumocfg_path)
+        self.forecaster = QueueForecaster()
+        self.history_buffer = {}
+        self.last_decision_eval_s = 0.0
+        self.persistent_alerts = {}
+
+        self.corridor_decision_running = False
+        self.corridor_decision_lock = threading.Lock()
+
+
+
+
+
 
         # Feature names - get exactly what XGBoost expects from the loaded model
-        self.feature_names = self.model_5m.feature_names
+        self.feature_names = self.forecast_model.feature_names
         if not self.feature_names:
             self.feature_names = [f"f{i}" for i in range(42)]
-            
+
         self.feature_extractor = LiveFeatureExtractor(self.feature_names)
         self.pending_plan = None
         self.lock = threading.Lock()
@@ -65,54 +83,61 @@ class SimulationManager:
             "junctions": {},
             "active_alerts": []
         }
-        
+
         # Threading and Asyncio
         self.sim_thread = None
         self.loop = None
-        
+
         # WebSocket subscribers
         self.subscribers = set()
 
         # Cached sumolib net for coordinate conversion (shared with network_geometry)
-        self._net = get_net(str(self.project_dir / "network" / "sancheti_core.net.xml"))
+        self.net_path = Path("/Users/vedantjadhao/Documents/veda/asteria-command-center/backend/sumo_network/network/sancheti_core.net.xml")
+        self._net = get_net(str(self.net_path))
 
     def start(self, loop: asyncio.AbstractEventLoop):
         """Start the SUMO TraCI process in a dedicated background thread."""
         if self.is_running:
             return
-            
+
         self.loop = loop
         self.is_running = True
-        
+
         # Start the background thread
         self.sim_thread = threading.Thread(target=self._simulation_loop, daemon=True)
         self.sim_thread.start()
-        
+
     def _start_sumo(self):
         """Starts or Restarts SUMO."""
         try:
-            traci.close()
+            with traci_lock:
+                traci.switch("default")
+                traci.close()
         except:
             pass
-        traci.start(["sumo", "-c", str(self.sumocfg_path), "--no-step-log", "true"])
-        
+        with traci_lock:
+            traci.start(["sumo", "-c", str(self.sumocfg_path), "--no-step-log", "true"], label="default")
+            traci.switch("default")
+
     def _simulation_loop(self):
         """Dedicated thread running the blocking TraCI steps."""
         self._start_sumo()
-        
+
         while self.is_running:
             start_time = time.time()
-            
+
             try:
-                # Step SUMO by 1.0s (assuming 0.5s step length in sumocfg)
-                traci.simulationStep()
-                traci.simulationStep()
-                time_s = traci.simulation.getTime()
-                
-                # Update state
-                self.state["time_s"] = time_s
-                self._update_junctions()
-                self._update_vehicles()
+                with traci_lock:
+                    traci.switch("default")
+                    # Step SUMO by 1.0s (assuming 0.5s step length in sumocfg)
+                    traci.simulationStep()
+                    traci.simulationStep()
+                    time_s = traci.simulation.getTime()
+
+                    # Update state
+                    self.state["time_s"] = time_s
+                    self._update_junctions()
+                    self._update_vehicles()
 
                 # Check for approved plans to execute
                 with self.lock:
@@ -121,31 +146,24 @@ class SimulationManager:
                         if success:
                             self.pending_plan = None
 
-                # Collect 5s Raw Telemetry for J1_SAN_GANESHKHIND
-                if int(time_s) % 5 == 0:
-                    self._collect_raw_telemetry(time_s)
-                    
-                # Run Forecasting & Decision Pipeline every 30 seconds
-                if int(time_s) % 30 == 0:
 
-                    self._run_pipeline()
-                
+
                 # Push WS broadcast to the main asyncio loop
                 if self.loop and self.subscribers:
                     asyncio.run_coroutine_threadsafe(self._broadcast_state(), self.loop)
-                    
+
                 # Handle scenario end (600s). We assume if time_s goes past 600, or TraCI raises FatalTraCIError
                 if time_s >= 600:
                     logger.info("Simulation reached 600s. Restarting scenario to maintain live feed.")
                     self._start_sumo()
-                    
+
             except traci.exceptions.FatalTraCIError:
                 # Simulation ended naturally, restart
                 logger.info("TraCI connection closed. Restarting scenario.")
                 self._start_sumo()
             except Exception as e:
                 logger.error(f"Error in simulation loop: {e}")
-            
+
             # Sleep to maintain 1Hz real-time cadence
             elapsed = time.time() - start_time
             sleep_time = max(0, 1.0 - elapsed)
@@ -154,19 +172,19 @@ class SimulationManager:
 
     def _update_vehicles(self):
         """Read vehicle positions from TraCI, convert to lon/lat, and store in state."""
+        from app.sim.network_geometry import _GeoConverter
         vehicles = []
-        net = self._net
-        has_geo = net.hasGeoProj() if net else False
+        converter = _GeoConverter(self._net)
         for vid in traci.vehicle.getIDList():
             x, y = traci.vehicle.getPosition(vid)
             speed = traci.vehicle.getSpeed(vid)
-            if has_geo:
-                lon, lat = net.convertXY2LonLat(x, y)
+            try:
+                lon, lat = converter.convert(x, y)
                 vehicles.append({"id": vid, "lon": lon, "lat": lat, "speed": speed})
-            else:
-                vehicles.append({"id": vid, "lon": None, "lat": None, "speed": speed})
+            except Exception:
+                pass
         self.state["vehicles"] = vehicles
-            
+
 
     def _get_tls_id(self, junction_id):
         if not hasattr(self, 'config') or not self.config:
@@ -175,123 +193,244 @@ class SimulationManager:
             if j["junction_id"] == junction_id:
                 return j.get("tls_id")
         return None
-        
+
     def _update_junctions(self):
-        """Read state from TraCI into our state dict."""
-        with open(self.junction_cfg_path, "r") as f:
-            junction_cfg_data = json.load(f)
-            
-        for j in junction_cfg_data.get("junctions", []):
-            jid = j["junction_id"]
-            
-            junction_queue_m = 0.0
-            active_vehicles = 0
-            
-            for app in j.get("approaches", []):
-                for edge in app.get("edges", []):
-                    num_lanes = traci.edge.getLaneNumber(edge)
-                    for i in range(num_lanes):
-                        lane_id = f"{edge}_{i}"
-                        junction_queue_m += traci.lane.getLastStepHaltingNumber(lane_id) * 5.0
-                        active_vehicles += traci.lane.getLastStepVehicleNumber(lane_id)
-                        
-            try:
-                tls_id = self._get_tls_id(jid)
-                if tls_id:
-                    tl_state = traci.trafficlight.getRedYellowGreenState(tls_id)
-                    if 'G' in tl_state or 'g' in tl_state:
-                        signal = "GREEN"
-                    elif 'y' in tl_state or 'Y' in tl_state:
-                        signal = "YELLOW"
-                    else:
-                        signal = "RED"
-                else:
-                    signal = "UNKNOWN"
-            except traci.exceptions.TraCIException:
-                signal = "UNKNOWN"
-                
-            self.state["junctions"][jid] = {
-                "id": jid,
-                "name": j.get("label", jid),
-                "queue_m": round(junction_queue_m, 1),
-                "active_vehicles": active_vehicles,
-                "signal_state": signal,
-                "status": "Normal" if junction_queue_m < 50 else "Severe"
-            }
-            
-
-
-    def _collect_raw_telemetry(self, time_s: float):
-        """Collect exact TraCI metrics for the J1_SAN_GANESHKHIND approach to match training."""
-        j1_edges = ["173045977#1", "1298622049"]
-        downstream_edges = ["229904828#1", "229904828#2"] # To J2
-        
-        # Basic telemetry across all lanes of approach
-        q_m = 0.0
-        v_c = 0
-        h_c = 0
-        speeds = []
-        occs = []
-        
-        for edge in j1_edges:
-            for i in range(traci.edge.getLaneNumber(edge)):
-                lid = f"{edge}_{i}"
-                q_m += traci.lane.getLastStepHaltingNumber(lid) * 5.0
-                v_c += traci.lane.getLastStepVehicleNumber(lid)
-                h_c += traci.lane.getLastStepHaltingNumber(lid)
-                speeds.append(traci.lane.getLastStepMeanSpeed(lid))
-                occs.append(traci.lane.getLastStepOccupancy(lid))
-                
-        # To get real outflow, you would need detectors. For live approximation:
-        # we will approximate it using the difference in vehicle count or a dummy value.
-        # This is a safe approximation for the command center demo without setting up full induction loops.
-        mean_spd = sum(speeds)/len(speeds) if speeds else 0.0
-        occ = sum(occs)/len(occs) if occs else 0.0
-        
-        # Downstream Q
-        dq_m = 0.0
-        for edge in downstream_edges:
-            for i in range(traci.edge.getLaneNumber(edge)):
-                dq_m += traci.lane.getLastStepHaltingNumber(f"{edge}_{i}") * 5.0
-                
         try:
-            tls_id = self._get_tls_id("J1_SAN")
-            if tls_id:
-                tl_state = traci.trafficlight.getRedYellowGreenState(tls_id)
-                is_green = 1 if ('G' in tl_state or 'g' in tl_state) else 0
-                is_yellow = 1 if ('Y' in tl_state or 'y' in tl_state) else 0
-                is_red = 1 if all(c in ['r', 'R'] for c in tl_state) else 0
-            else:
-                is_green, is_yellow, is_red = 0, 0, 0
-        except:
-            is_green, is_yellow, is_red = 0, 0, 0
-            
-        row = {
-            "time_s": time_s,
-            "queue_length_m": q_m,
-            "vehicle_count": v_c,
-            "halting_count": h_c,
-            "downstream_junction_queue_length_m": dq_m,
-            "mean_speed_mps": mean_spd,
-            "occupancy_pct": occ,
-            "platoon_eta_s": 0.0, # Approximate
-            "outflow_vehicles_5s": 5, # Approximate live flow
-            "upstream_outflow_vehicles_5s": 5,
-            "program_id": 0,
-            "signal_phase_index": 0,
-            "phase_remaining_s": 10.0,
-            "phase_elapsed_s": 10.0,
-            "is_green": is_green,
-            "is_yellow": is_yellow,
-            "is_all_red": is_red,
-            "platoon_distance_m": 0.0,
-        }
-        self.feature_extractor.push_raw_telemetry(row)
-        
+            new_junctions = {}
+            new_junctions = {}
+            current_alerts = []
+
+            for j in self.config.get("junctions", []):
+                jid = j["junction_id"]
+                tls_id = j.get("tls_id")
+
+                # --- Feature computation: must match data_collector_2.py EXACTLY ---
+                # data_collector_2.py uses:
+                #   lanes = traci.trafficlight.getControlledLanes(tls_id)  (lane-level, deduped)
+                #   q     = sum(traci.lane.getLastStepHaltingNumber(l) * 5.0 for l in lanes)
+                #   avg_speed_kmh = mean speed of all vehicles on those lanes (junction-scoped)
+                # DO NOT use edge-level calls or the global corridor speed for model features.
+                # The global self.state["average_speed_kmh"] is ONLY for the dashboard KPI.
+
+                # Junction-scoped model features (lane-level, matching training pipeline)
+                junction_q_m = 0.0    # queue_length_m fed to ML model
+                junction_v_c = 0      # vehicle_count fed to ML model
+                junction_speeds = []  # raw m/s speeds on this junction's lanes (for model feature)
+
+                halting_vehicles = 0
+                raw_state = ""
+                current_phase = 0
+                next_switch = 0.0
+
+                if tls_id:
+                    try:
+                        raw_state = traci.trafficlight.getRedYellowGreenState(tls_id)
+                        current_phase = traci.trafficlight.getPhase(tls_id)
+                        next_switch = traci.trafficlight.getNextSwitch(tls_id)
+
+                        lanes = list(set(traci.trafficlight.getControlledLanes(tls_id)))
+                        for lane in lanes:
+                            try:
+                                hn = traci.lane.getLastStepHaltingNumber(lane)
+                                halting_vehicles += hn
+                                junction_q_m += hn * 5.0
+                                junction_v_c += traci.lane.getLastStepVehicleNumber(lane)
+                                for vid in traci.lane.getLastStepVehicleIDs(lane):
+                                    junction_speeds.append(traci.vehicle.getSpeed(vid))
+                            except Exception:
+                                pass
+                        junction_avg_speed_kmh = (sum(junction_speeds) / len(junction_speeds) * 3.6
+                                          if junction_speeds else 0.0)
+                    except Exception as e:
+                        pass
+
+                q_m = junction_q_m
+                v_c = junction_v_c
+
+                # Maintain 20s history buffer (store state every 1s)
+                if jid not in self.history_buffer:
+                    self.history_buffer[jid] = deque(maxlen=25)
+
+                cur_time = self.state.get("time_s", 0)
+                self.history_buffer[jid].append((q_m, cur_time))
+
+                # Compute lag features (same window logic as build_dataset.py)
+                q_5 = q_m
+                q_10 = q_m
+                q_15 = q_m
+                q_20 = q_m
+
+                for (q, t) in reversed(self.history_buffer[jid]):
+                    dt = cur_time - t
+                    if 4.5 <= dt <= 5.5:  q_5  = q
+                    elif 9.5 <= dt <= 10.5: q_10 = q
+                    elif 14.5 <= dt <= 15.5: q_15 = q
+                    elif 19.5 <= dt <= 20.5: q_20 = q
+                    if 4.5 <= dt <= 5.5:  q_5  = q
+                    if 9.5 <= dt <= 10.5: q_10 = q
+                    if 14.5 <= dt <= 15.5: q_15 = q
+                    if 19.5 <= dt <= 21.0: q_20 = q
+
+                q_slope = (q_m - q_20) / 20.0 if len(self.history_buffer[jid]) >= 20 else 0.0
+
+                # ML feature vector — all values are junction-scoped, matching training pipeline
+                feature_dict = {
+                    'queue_length_m':  q_m,
+                    'vehicle_count':   v_c,
+                    'avg_speed_kmh':   junction_avg_speed_kmh,   # junction-scoped, NOT corridor-wide
+                    'queue_minus_5':   q_5,
+                    'queue_minus_10':  q_10,
+                    'queue_minus_15':  q_15,
+                    'queue_minus_20':  q_20,
+                    'queue_slope':     q_slope
+                }
+
+                predicted_queue = self.forecaster.predict(feature_dict)
+
+                # Capacity ratio for forecast risk label
+                capacity = self.spillback_engine.storage_capacities_m.get(jid, 200.0)
+                predicted_ratio = predicted_queue / capacity if capacity > 0 else 0.0
+
+                forecast_risk = "LOW"
+                if predicted_ratio >= 1.0:  forecast_risk = "SPILLBACK"
+                elif predicted_ratio >= 0.80: forecast_risk = "HIGH"
+                elif predicted_ratio >= 0.40: forecast_risk = "MEDIUM"
+
+
+                new_junctions[jid] = {
+                    "name": j["label"],
+                    "queue_m": round(q_m, 1),
+                    "halting_vehicles": halting_vehicles,
+                    "active_vehicles": v_c,
+                    "status": "Online",
+                    "predicted_queue_length_m": round(predicted_queue, 1),
+                    "predicted_capacity_ratio": round(predicted_ratio, 2),
+                    "forecast_risk": forecast_risk,
+                    "_junction_avg_speed_kmh": round(junction_avg_speed_kmh, 2),
+                    "tls_id": tls_id,
+                    "raw_state": raw_state,
+                    "current_phase": current_phase,
+                    "next_switch": next_switch,
+                    "remaining_time": max(0, next_switch - cur_time) if next_switch > cur_time else 0
+                }
+
+                # --- Phase 2.2 Decision Engine Trigger ---
+
+
+
+                # --- Spillback Evaluation (unchanged) ---
+                alert = self.spillback_engine.evaluate(jid, j["label"], round(q_m, 1))
+                if alert:
+                    if jid in self.persistent_alerts:
+                        alert["id"] = self.persistent_alerts[jid]["id"]
+                        alert["detected_time"] = self.persistent_alerts[jid]["detected_time"]
+                    self.persistent_alerts[jid] = alert
+                    current_alerts.append(alert)
+                else:
+                    if jid in self.persistent_alerts:
+                        del self.persistent_alerts[jid]
+
+            self.state["junctions"] = new_junctions
+            self.state["active_alerts"] = current_alerts
+
+            # --- Corridor Decision Engine ---
+            if self.decision_engine:
+                cur_time = self.state.get("time_s", 0)
+                if cur_time - self.last_decision_eval_s >= 30.0:
+                    corridor_risk = "LOW"
+                    max_ratio = 0.0
+                    critical_jid = ""
+                    cj_states = {}
+
+                    for jid, jd in new_junctions.items():
+                        ratio = jd.get("predicted_capacity_ratio", 0.0)
+                        if ratio > max_ratio:
+                            max_ratio = ratio
+                            critical_jid = jid
+
+                        risk = jd.get("forecast_risk", "LOW")
+                        if risk == "SPILLBACK":
+                            corridor_risk = "SPILLBACK"
+                        elif risk == "HIGH" and corridor_risk != "SPILLBACK":
+                            corridor_risk = "HIGH"
+
+                        # Find the corresponding tls_id from junction_config
+                        tls_id = next((x.get("tls_id") for x in self.config.get("junctions", []) if x.get("junction_id") == jid), jid)
+
+                        cj_states[jid] = CorridorJunctionState(
+                            junction_id=jid,
+                            tls_id=tls_id,
+                            queue_length_m=jd.get("queue_m", 0.0),
+                            predicted_queue_length_m=jd.get("predicted_queue_length_m", 0.0),
+                            capacity_m=self.spillback_engine.storage_capacities_m.get(jid, 200.0),
+                            predicted_capacity_ratio=ratio,
+                            vehicle_count=jd.get("active_vehicles", 0),
+                            avg_speed_kmh=jd.get("_junction_avg_speed_kmh", 0.0),
+                            risk_level=risk,
+                            timestamp=cur_time
+                        )
+
+
+                    has_high_live_alert = any(a.get("severity") in ["HIGH", "SPILLBACK"] for a in current_alerts)
+
+                    if corridor_risk in ["HIGH", "SPILLBACK"] or has_high_live_alert:
+                        if has_high_live_alert and corridor_risk not in ["HIGH", "SPILLBACK"]:
+                            corridor_risk = "HIGH" # Force corridor risk up if live alert says so
+
+                        self.last_decision_eval_s = cur_time
+
+
+                        c_state = CorridorState(
+                            corridor_id="pravaha_shivajinagar_three_signal_corridor",
+                            timestamp=cur_time,
+                            junctions=cj_states,
+                            upstream_downstream_relationships={"J1_SAN": "J2_SJM", "J2_SJM": "J3_SAP"},
+                            total_queue_m=sum(x.queue_length_m for x in cj_states.values()),
+                            max_predicted_capacity_ratio=max_ratio,
+                            critical_junction_id=critical_jid,
+                            corridor_risk=corridor_risk,
+                            active_interventions=[]
+                        )
+
+
+                        with self.corridor_decision_lock:
+                            if self.corridor_decision_running:
+                                logger.info("Skipping CorridorDecisionEngine run: already running.")
+                            else:
+                                self.corridor_decision_running = True
+                                cf_state_file = tempfile.NamedTemporaryFile(delete=False, suffix=".xml").name
+                                try:
+                                    with traci_lock:
+                                        traci.switch("default")
+                                        traci.simulation.saveState(cf_state_file)
+
+                                    def run_corridor_de(st, f):
+                                        import os
+                                        try:
+                                            self.decision_engine.process_corridor_state(st, f)
+                                        except Exception as e:
+                                            logger.error(f"Corridor Decision Engine failed: {e}")
+                                        finally:
+                                            try:
+                                                os.remove(f)
+                                            except Exception as e:
+                                                logger.error(f"Failed to remove temp state file: {e}")
+                                            with self.corridor_decision_lock:
+                                                self.corridor_decision_running = False
+
+                                    t = threading.Thread(target=run_corridor_de, args=(c_state, cf_state_file), daemon=True)
+                                    t.start()
+                                except Exception as e:
+                                    logger.error(f"Failed to save state for corridor counterfactual: {e}")
+                                    with self.corridor_decision_lock:
+                                        self.corridor_decision_running = False
+        except Exception as e:
+            logger.error(f"Failed to update junctions: {e}", exc_info=True)
+
     def apply_plan(self, plan):
         with self.lock:
             self.pending_plan = plan
-            
+
     def _execute_plan(self, plan):
         import traci
         # First pass: Check if ANY junction is in a clearance phase.
@@ -307,7 +446,7 @@ class SimulationManager:
                     return False # Tell the caller to keep pending_plan and retry later
             except Exception as e:
                 pass
-                
+
         # Second pass: Apply the changes
         for action in plan.junction_actions:
             tls_id = self._get_tls_id(action.junction_id)
@@ -321,121 +460,40 @@ class SimulationManager:
             except Exception as e:
                 logger.error(f"Failed to apply signal change to {action.junction_id}: {e}")
         return True # Success
-                
-    def _run_pipeline(self):
-        """Run the SpillbackEngine -> Safety -> Evaluate -> Decision loop."""
-        # Aggregate the last 30s
-        agg_row = self.feature_extractor.trigger_aggregation()
-        if not agg_row:
-            return
-            
-        j1_queue = agg_row["queue_length_m"]
-        
-        # Suppress forecasting for the first 150 seconds to allow full history buffer to build up
-        if self.state["time_s"] < 150:
-            return
-            
-        features = self.feature_extractor.extract_features()
-        dmatrix = xgb.DMatrix([features], feature_names=self.feature_names)
 
 
-        pred_5m = float(self.model_5m.predict(dmatrix)[0])
-        pred_10m = float(self.model_10m.predict(dmatrix)[0])
-        
-        # 1. Evaluate Spillback Risk
-        fr = ForecastResult(
-            junction_id="J1_SAN",
-            approach_id="GANESHKHIND",
-            current_queue_m=j1_queue,
-            queue_5m_m=max(0, pred_5m),
-            queue_10m_m=max(0, pred_10m),
-            confidence="high"
-        )
-        
-        spillback_result = self.spillback_engine.evaluate(fr)
-        alert_obj = spillback_result.to_alert()
-        
-        if alert_obj.severity in ["WATCH", "HIGH", "SPILLBACK"]:
-            # Check if alert already active
-            if not any(a.get("incident_name") == "Congestion predicted" for a in self.state["active_alerts"]):
-                
-                # 2. Candidate Generation
-                candidates = self.candidate_generator.generate(spillback_result)
-                
-                # 3. Safety Gate
-                safe_candidates = []
-                rejected_reasons = {}
-                for c in candidates:
-                    res = self.safety_gate.validate(c)
-                    if res.passed:
-                        safe_candidates.append(c)
-                    else:
-                        rejected_reasons[c.plan_id] = "; ".join(res.reasons)
-                        
-                # 4. Evaluation
-                # Save state for counterfactual replay
-                state_file = str(self.project_dir / "outputs" / "live_state_save.xml")
-                traci.simulation.saveState(state_file)
-                
-                results = self.evaluator.evaluate(safe_candidates, base_state_file=state_file)
-                
-                # 5. Decision Selection
-                recommendation = self.decision_selector.select(candidates, results, confidence=spillback_result.confidence)
-                
-                # Merge safety rejections
-                for cid, reason in rejected_reasons.items():
-                    if cid not in recommendation.rejected_candidate_reasons:
-                        recommendation.rejected_candidate_reasons[cid] = reason
-                
-                # Persist to DB
-                db = SessionLocal()
-                try:
-                    db_alert = Alert(
-                        id=f"INC-AST-{int(time.time())}",
-                        incident_name="Congestion predicted",
-                        severity=alert_obj.severity,
-                        location="Sancheti Chowk",
-                        affected_approach="GANESHKHIND",
-                        confidence=92.0,
-                        expected_in_s=alert_obj.expected_onset_time_s,
-                        predicted_impact=alert_obj.supporting_evidence,
-                        recommendation_text="Extend east-west green by 20s and coordinate Riverbend.",
-                        raw_recommendation_json=json.dumps(recommendation.selected_plan.to_dict()) if hasattr(recommendation.selected_plan, 'to_dict') else "{}"
-                    )
-                    db.add(db_alert)
-                    db.commit()
-                    
-                    self.state["active_alerts"].append({
-                        "id": db_alert.id,
-                        "incident_name": db_alert.incident_name,
-                        "severity": db_alert.severity
-                    })
-                finally:
-                    db.close()
 
     async def _broadcast_state(self):
         """Send current state to all connected websocket clients."""
+        from app.models.recommendation_store import store
+        pending = store.list_pending()
+        self.state["pending_recommendations"] = [req.model_dump() for req in pending]
+
         if not self.subscribers:
             return
-            
-        message = json.dumps(self.state)
+
+        import json
+        message = json.dumps(self.state, default=str)
+
+
         disconnected = set()
         for ws in self.subscribers:
             try:
                 await ws.send_text(message)
-            except Exception:
+            except Exception as e:
+                print(f"[PRAVAHA WS] Broadcast failed, removing subscriber. Error: {e}")
                 disconnected.add(ws)
-                
+
         for ws in disconnected:
             self.subscribers.remove(ws)
 
     def stop(self):
 
         # Feature names - get exactly what XGBoost expects from the loaded model
-        self.feature_names = self.model_5m.feature_names
+        self.feature_names = self.forecast_model.feature_names
         if not self.feature_names:
             self.feature_names = [f"f{i}" for i in range(42)]
-            
+
         self.feature_extractor = LiveFeatureExtractor(self.feature_names)
         self.pending_plan = None
         self.lock = threading.Lock()

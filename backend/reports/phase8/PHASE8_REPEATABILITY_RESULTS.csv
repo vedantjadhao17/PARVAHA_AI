@@ -1,0 +1,2 @@
+scenario,runs,forecast_match_pct,decision_match_pct,signal_state_match_pct
+TEST_normal_82452,5,100.0,100.0,100.0

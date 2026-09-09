@@ -1,0 +1,56 @@
+{
+  "HOLD": {
+    "mode": "HOLD",
+    "steps_completed": 600,
+    "avg_queue_per_junction_m": {
+      "cluster_13546492148_1838721956": 6.558333333333334,
+      "cluster_2061304035_245647208": 3.65,
+      "cluster_245647168_3238255150_3495323634": 24.166666666666668
+    },
+    "total_avg_queue_m": 11.458333333333334,
+    "peak_queue_per_junction_m": {
+      "cluster_13546492148_1838721956": 25.0,
+      "cluster_2061304035_245647208": 30.0,
+      "cluster_245647168_3238255150_3495323634": 135.0
+    }
+  },
+  "SINGLE": {
+    "mode": "SINGLE",
+    "steps_completed": 600,
+    "avg_queue_per_junction_m": {
+      "cluster_13546492148_1838721956": 6.983333333333333,
+      "cluster_2061304035_245647208": 3.316666666666667,
+      "cluster_245647168_3238255150_3495323634": 40.96666666666667
+    },
+    "total_avg_queue_m": 17.08888888888889,
+    "peak_queue_per_junction_m": {
+      "cluster_13546492148_1838721956": 25.0,
+      "cluster_2061304035_245647208": 30.0,
+      "cluster_245647168_3238255150_3495323634": 125.0
+    },
+    "queue_reduction_vs_hold_pct": -49.139393939393926
+  },
+  "CORRIDOR": {
+    "mode": "CORRIDOR",
+    "steps_completed": 600,
+    "avg_queue_per_junction_m": {
+      "cluster_13546492148_1838721956": 6.983333333333333,
+      "cluster_2061304035_245647208": 3.316666666666667,
+      "cluster_245647168_3238255150_3495323634": 40.96666666666667
+    },
+    "total_avg_queue_m": 17.08888888888889,
+    "peak_queue_per_junction_m": {
+      "cluster_13546492148_1838721956": 25.0,
+      "cluster_2061304035_245647208": 30.0,
+      "cluster_245647168_3238255150_3495323634": 125.0
+    },
+    "queue_reduction_vs_hold_pct": -49.139393939393926
+  },
+  "_summary": {
+    "hold_avg_queue_m": 11.458333333333334,
+    "single_avg_queue_m": 17.08888888888889,
+    "corridor_avg_queue_m": 17.08888888888889,
+    "single_reduction_pct": -49.139393939393926,
+    "corridor_reduction_pct": -49.139393939393926
+  }
+}

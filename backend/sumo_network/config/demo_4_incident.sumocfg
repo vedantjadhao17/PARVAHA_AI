@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <input><net-file value="../network/sancheti_core.net.xml"/><route-files value="../routes/demo_4_incident.rou.xml"/><additional-files value="../additional/corridor_detectors.add.xml"/></input>
+    <time><begin value="0"/><end value="600"/></time>
+    <random_number><seed value="42"/></random_number>
+</configuration>

@@ -1,0 +1,157 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.7, pytest-9.1.1, pluggy-1.6.0 -- /Volumes/personal/opt/anaconda3/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/vedantjadhao/Documents/veda/asteria-command-center
+plugins: anyio-4.2.0
+collecting ... collected 94 items
+
+backend/tests/test_candidate_generator.py::test_generate_proposal_includes_hold PASSED [  1%]
+backend/tests/test_candidate_generator.py::test_generate_proposal_includes_extensions PASSED [  2%]
+backend/tests/test_candidate_generator.py::test_unknown_tls_returns_noop PASSED [  3%]
+backend/tests/test_candidate_generator.py::test_cycle_preservation_in_candidates PASSED [  4%]
+backend/tests/test_candidate_generator.py::test_phase_ordering_preserved PASSED [  5%]
+backend/tests/test_counterfactual.py::test_unsafe_candidate_skipped PASSED [  6%]
+backend/tests/test_counterfactual.py::test_safe_candidate_evaluated PASSED [  7%]
+backend/tests/test_counterfactual.py::test_evaluation_failure_handled PASSED [  8%]
+backend/tests/test_decision_engine.py::test_no_improvement_results_in_noop PASSED [  9%]
+backend/tests/test_decision_engine.py::test_meaningful_improvement_creates_recommendation PASSED [ 10%]
+backend/tests/test_decision_engine.py::test_unsafe_evaluations_ignored PASSED [ 11%]
+backend/tests/test_manager_smoke.py::test_manager_initialization PASSED  [ 12%]
+backend/tests/test_outcome_tracker.py::test_outcome_tracker_lifecycle PASSED [ 13%]
+backend/tests/test_outcome_tracker.py::test_outcome_tracker_interrupted PASSED [ 14%]
+backend/tests/test_phase5_dataset.py::test_file_sizes PASSED             [ 15%]
+backend/tests/test_phase5_dataset.py::test_columns_present PASSED        [ 17%]
+backend/tests/test_phase5_dataset.py::test_no_nan_in_train PASSED        [ 18%]
+backend/tests/test_phase5_dataset.py::test_no_nan_in_test PASSED         [ 19%]
+backend/tests/test_phase5_dataset.py::test_train_scenarios PASSED        [ 20%]
+backend/tests/test_phase5_dataset.py::test_test_scenarios PASSED         [ 21%]
+backend/tests/test_phase5_dataset.py::test_train_junctions PASSED        [ 22%]
+backend/tests/test_phase5_dataset.py::test_scenarios_in_only_one_split XFAIL [ 23%]
+backend/tests/test_phase5_dataset.py::test_temporal_no_overlap PASSED    [ 24%]
+backend/tests/test_phase5_dataset.py::test_train_test_ratio PASSED       [ 25%]
+backend/tests/test_phase5_dataset.py::test_feature_values_finite PASSED  [ 26%]
+backend/tests/test_phase5_dataset.py::test_queue_length_non_negative PASSED [ 27%]
+backend/tests/test_phase5_evaluation.py::test_forecast_results_exist PASSED [ 28%]
+backend/tests/test_phase5_evaluation.py::test_model_outperforms_naive_rmse PASSED [ 29%]
+backend/tests/test_phase5_evaluation.py::test_model_rmse_within_known_range PASSED [ 30%]
+backend/tests/test_phase5_evaluation.py::test_r2_positive PASSED         [ 31%]
+backend/tests/test_phase5_evaluation.py::test_all_three_junctions_evaluated PASSED [ 32%]
+backend/tests/test_phase5_evaluation.py::test_corridor_ablation_results_exist PASSED [ 34%]
+backend/tests/test_phase5_evaluation.py::test_hold_baseline_non_zero PASSED [ 35%]
+backend/tests/test_phase5_leakage.py::test_target_not_in_feature_cols PASSED [ 36%]
+backend/tests/test_phase5_leakage.py::test_all_features_present_in_train PASSED [ 37%]
+backend/tests/test_phase5_leakage.py::test_target_present_in_train PASSED [ 38%]
+backend/tests/test_phase5_leakage.py::test_target_temporal_alignment PASSED [ 39%]
+backend/tests/test_phase5_leakage.py::test_no_duplicate_rows PASSED      [ 40%]
+backend/tests/test_phase5_leakage.py::test_lag_features_not_all_equal_target PASSED [ 41%]
+backend/tests/test_signal_plan.py::TestPhaseSpec::test_valid_phase PASSED [ 42%]
+backend/tests/test_signal_plan.py::TestPhaseSpec::test_duration_zero_rejected PASSED [ 43%]
+backend/tests/test_signal_plan.py::TestPhaseSpec::test_negative_duration_rejected PASSED [ 44%]
+backend/tests/test_signal_plan.py::TestPhaseSpec::test_duration_rounded_to_one_decimal PASSED [ 45%]
+backend/tests/test_signal_plan.py::TestFromBaseline::test_baseline_candidate_is_valid[cluster_13546492148_1838721956] PASSED [ 46%]
+backend/tests/test_signal_plan.py::TestFromBaseline::test_baseline_candidate_is_valid[cluster_2061304035_245647208] PASSED [ 47%]
+backend/tests/test_signal_plan.py::TestFromBaseline::test_baseline_candidate_is_valid[cluster_245647168_3238255150_3495323634] PASSED [ 48%]
+backend/tests/test_signal_plan.py::TestFromBaseline::test_baseline_candidate_j1_has_4_phases PASSED [ 50%]
+backend/tests/test_signal_plan.py::TestFromBaseline::test_baseline_candidate_j3_has_8_phases PASSED [ 51%]
+backend/tests/test_signal_plan.py::TestFromBaseline::test_baseline_green_phase_deltas_are_zero PASSED [ 52%]
+backend/tests/test_signal_plan.py::TestFromBaseline::test_as_traci_phase_dict_empty_for_baseline PASSED [ 53%]
+backend/tests/test_signal_plan.py::TestFromBaseline::test_unknown_tls_id_rejected PASSED [ 54%]
+backend/tests/test_signal_plan.py::TestGreenShift::test_valid_shift_j1_extend_phase0_shorten_phase2 PASSED [ 55%]
+backend/tests/test_signal_plan.py::TestGreenShift::test_shift_creates_nonzero_traci_dict PASSED [ 56%]
+backend/tests/test_signal_plan.py::TestGreenShift::test_shift_violates_min_green_rejected PASSED [ 57%]
+backend/tests/test_signal_plan.py::TestGreenShift::test_shift_violates_max_green_rejected PASSED [ 58%]
+backend/tests/test_signal_plan.py::TestGreenShift::test_cannot_shift_yellow_phase PASSED [ 59%]
+backend/tests/test_signal_plan.py::TestGreenShift::test_broken_cycle_rejected_at_construction PASSED [ 60%]
+backend/tests/test_signal_plan.py::TestGreenShift::test_mutated_state_string_rejected PASSED [ 61%]
+backend/tests/test_signal_plan.py::TestSafetyCheckResult::test_passing_result_requires_empty_violations PASSED [ 62%]
+backend/tests/test_signal_plan.py::TestSafetyCheckResult::test_passing_with_violations_rejected PASSED [ 63%]
+backend/tests/test_signal_plan.py::TestSafetyCheckResult::test_failing_result_with_violations PASSED [ 64%]
+backend/tests/test_signal_plan.py::TestSafetyGate::test_baseline_passes_all_constraints PASSED [ 65%]
+backend/tests/test_signal_plan.py::TestSafetyGate::test_valid_shift_passes PASSED [ 67%]
+backend/tests/test_signal_plan.py::TestSafetyGate::test_sc01_yellow_duration_modified_fails PASSED [ 68%]
+backend/tests/test_signal_plan.py::TestSafetyGate::test_sc05_unknown_tls_fails PASSED [ 69%]
+backend/tests/test_signal_plan.py::TestSafetyGate::test_sc02_min_green_fails PASSED [ 70%]
+backend/tests/test_signal_plan.py::TestSafetyGate::test_sc03_max_green_fails PASSED [ 71%]
+backend/tests/test_signal_plan.py::TestSafetyGate::test_phase_removal_fails PASSED [ 72%]
+backend/tests/test_signal_plan.py::TestSafetyGate::test_phase_reordering_fails PASSED [ 73%]
+backend/tests/test_signal_plan.py::TestSafetyGate::test_negative_duration_fails PASSED [ 74%]
+backend/tests/test_signal_plan.py::TestSafetyGate::test_floating_point_cycle_tolerance PASSED [ 75%]
+backend/tests/test_signal_plan.py::TestSafetyGate::test_check_proposal_aggregates_violations PASSED [ 76%]
+backend/tests/test_signal_plan.py::TestSafetyGate::test_duplicate_junction_in_proposal_rejected PASSED [ 77%]
+backend/tests/test_signal_plan.py::TestRecommendationStore::test_add_and_get PASSED [ 78%]
+backend/tests/test_signal_plan.py::TestRecommendationStore::test_get_nonexistent_returns_none PASSED [ 79%]
+backend/tests/test_signal_plan.py::TestRecommendationStore::test_get_or_raise_raises_on_missing PASSED [ 80%]
+backend/tests/test_signal_plan.py::TestRecommendationStore::test_duplicate_id_rejected PASSED [ 81%]
+backend/tests/test_signal_plan.py::TestRecommendationStore::test_valid_status_transition_pending_to_approved PASSED [ 82%]
+backend/tests/test_signal_plan.py::TestRecommendationStore::test_valid_status_transition_approved_to_applied PASSED [ 84%]
+backend/tests/test_signal_plan.py::TestRecommendationStore::test_invalid_transition_pending_to_applied_rejected PASSED [ 85%]
+backend/tests/test_signal_plan.py::TestRecommendationStore::test_terminal_state_rejected_cannot_transition PASSED [ 86%]
+backend/tests/test_signal_plan.py::TestRecommendationStore::test_invalid_transition_pending_to_rollback_rejected PASSED [ 87%]
+backend/tests/test_signal_plan.py::TestRecommendationStore::test_invalid_transition_approved_to_pending_rejected PASSED [ 88%]
+backend/tests/test_signal_plan.py::TestRecommendationStore::test_invalid_transition_approved_to_rollback_rejected PASSED [ 89%]
+backend/tests/test_signal_plan.py::TestRecommendationStore::test_invalid_transition_applied_to_pending_rejected PASSED [ 90%]
+backend/tests/test_signal_plan.py::TestRecommendationStore::test_invalid_transition_applied_to_approved_rejected PASSED [ 91%]
+backend/tests/test_signal_plan.py::TestRecommendationStore::test_invalid_transition_rolled_back_to_pending_rejected PASSED [ 92%]
+backend/tests/test_signal_plan.py::TestRecommendationStore::test_invalid_transition_rolled_back_to_approved_rejected PASSED [ 93%]
+backend/tests/test_signal_plan.py::TestRecommendationStore::test_invalid_transition_rolled_back_to_applied_rejected PASSED [ 94%]
+backend/tests/test_signal_plan.py::TestRecommendationStore::test_valid_transition_applied_to_rollback PASSED [ 95%]
+backend/tests/test_signal_plan.py::TestRecommendationStore::test_list_pending_filters_correctly PASSED [ 96%]
+backend/tests/test_signal_plan.py::TestRecommendationStore::test_count PASSED [ 97%]
+backend/tests/test_signal_plan.py::TestRecommendationStore::test_selected_candidate_property PASSED [ 98%]
+backend/tests/test_verification.py::test_operator_log_immutability PASSED [100%]
+
+=============================== warnings summary ===============================
+backend/app/main.py:42
+  /Users/vedantjadhao/Documents/veda/asteria-command-center/backend/app/main.py:42: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+../../../../../Volumes/personal/opt/anaconda3/lib/python3.11/site-packages/fastapi/applications.py:4675
+../../../../../Volumes/personal/opt/anaconda3/lib/python3.11/site-packages/fastapi/applications.py:4675
+  /Volumes/personal/opt/anaconda3/lib/python3.11/site-packages/fastapi/applications.py:4675: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+backend/app/main.py:48
+  /Users/vedantjadhao/Documents/veda/asteria-command-center/backend/app/main.py:48: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("shutdown")
+
+../../../../../Volumes/personal/opt/anaconda3/lib/python3.11/site-packages/fastapi/testclient.py:1
+  /Volumes/personal/opt/anaconda3/lib/python3.11/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+backend/tests/test_outcome_tracker.py::test_outcome_tracker_lifecycle
+  /Users/vedantjadhao/Documents/veda/asteria-command-center/backend/tests/test_outcome_tracker.py:30: PydanticDeprecatedSince20: The `construct` method is deprecated; use `model_construct` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    cand = SignalPlanCandidate.construct(candidate_id="cand1", tls_id="TLS1", green_phase_deltas={})
+
+backend/tests/test_outcome_tracker.py::test_outcome_tracker_lifecycle
+  /Users/vedantjadhao/Documents/veda/asteria-command-center/backend/tests/test_outcome_tracker.py:31: PydanticDeprecatedSince20: The `construct` method is deprecated; use `model_construct` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    eval_hold = CandidateEvaluation.construct(evaluation_id="e1", candidate_id="cand0", tls_id="TLS1", avg_queue_m=45.0, max_queue_m=50.0, total_halting_vehicles=10, score=0, notes="HOLD", evaluated_at=datetime.datetime.now(datetime.timezone.utc), safety=None, evaluation_horizon_s=60)
+
+backend/tests/test_outcome_tracker.py::test_outcome_tracker_lifecycle
+  /Users/vedantjadhao/Documents/veda/asteria-command-center/backend/tests/test_outcome_tracker.py:32: PydanticDeprecatedSince20: The `construct` method is deprecated; use `model_construct` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    eval_cand = CandidateEvaluation.construct(evaluation_id="e2", candidate_id="cand1", tls_id="TLS1", avg_queue_m=30.0, max_queue_m=35.0, total_halting_vehicles=5, score=0, notes="Test", evaluated_at=datetime.datetime.now(datetime.timezone.utc), safety=None, evaluation_horizon_s=60)
+
+backend/tests/test_outcome_tracker.py::test_outcome_tracker_lifecycle
+  /Users/vedantjadhao/Documents/veda/asteria-command-center/backend/tests/test_outcome_tracker.py:34: PydanticDeprecatedSince20: The `construct` method is deprecated; use `model_construct` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    req = ApprovalRequest.construct(
+
+backend/tests/test_outcome_tracker.py::test_outcome_tracker_interrupted
+  /Users/vedantjadhao/Documents/veda/asteria-command-center/backend/tests/test_outcome_tracker.py:78: PydanticDeprecatedSince20: The `construct` method is deprecated; use `model_construct` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    req = ApprovalRequest.construct(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================== 93 passed, 1 xfailed, 10 warnings in 2.57s ==================

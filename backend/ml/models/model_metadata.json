@@ -1,0 +1,12 @@
+{
+  "model": "XGBRegressor",
+  "forecast_horizon_s": 60,
+  "training_samples": 2436,
+  "test_samples": 612,
+  "baseline_rmse": 26.009833484828324,
+  "baseline_mae": 11.397058823529411,
+  "model_rmse": 16.557719244290947,
+  "model_mae": 8.125960038378349,
+  "rmse_improvement_pct": 36.34054114975725,
+  "mae_improvement_pct": 28.701253856809327
+}

@@ -1,0 +1,57 @@
+{
+  "total_predictions": 5343,
+  "matched_pairs_count": 5163,
+  "unmatched_predictions": 180,
+  "matched_percentage": 96.63,
+  "live_rmse": 14.3454,
+  "live_mae": 9.3149,
+  "mean_prediction_error": 1.5487,
+  "mean_absolute_error": 9.3149,
+  "sample_pairs": [
+    {
+      "scenario_id": "sancheti_congestion.sumocfg",
+      "junction_id": "J1_SAN",
+      "time_prediction_made": 20.0,
+      "time_target": 80.0,
+      "predicted_queue_m": 1.4,
+      "actual_queue_m": 0.0,
+      "error": 1.4
+    },
+    {
+      "scenario_id": "sancheti_congestion.sumocfg",
+      "junction_id": "J1_SAN",
+      "time_prediction_made": 21.0,
+      "time_target": 81.0,
+      "predicted_queue_m": 1.4,
+      "actual_queue_m": 0.0,
+      "error": 1.4
+    },
+    {
+      "scenario_id": "sancheti_congestion.sumocfg",
+      "junction_id": "J1_SAN",
+      "time_prediction_made": 22.0,
+      "time_target": 82.0,
+      "predicted_queue_m": 1.4,
+      "actual_queue_m": 0.0,
+      "error": 1.4
+    },
+    {
+      "scenario_id": "sancheti_congestion.sumocfg",
+      "junction_id": "J1_SAN",
+      "time_prediction_made": 23.0,
+      "time_target": 83.0,
+      "predicted_queue_m": 1.4,
+      "actual_queue_m": 0.0,
+      "error": 1.4
+    },
+    {
+      "scenario_id": "sancheti_congestion.sumocfg",
+      "junction_id": "J1_SAN",
+      "time_prediction_made": 24.0,
+      "time_target": 84.0,
+      "predicted_queue_m": 1.4,
+      "actual_queue_m": 0.0,
+      "error": 1.4
+    }
+  ]
+}

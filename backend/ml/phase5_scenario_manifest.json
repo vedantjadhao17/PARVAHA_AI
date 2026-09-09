@@ -1,0 +1,59 @@
+{
+  "version": "phase5",
+  "note": "Current SUMO corpus. No incident/heavy/motorcycle scenarios available.",
+  "scenarios": [
+    {
+      "scenario_id": "sancheti_smoke",
+      "category": "LOW_DEMAND",
+      "demand_scale": "low",
+      "vehicle_count_approx": 40,
+      "config_file": "backend/sumo_network/config/sancheti_smoke.sumocfg",
+      "route_file": "backend/sumo_network/routes/smoke.rou.xml",
+      "seed": "unknown",
+      "split": "TRAIN_AND_TEST_temporal",
+      "note": "Same scenario in both train (first 80% time) and test (last 20% time)"
+    },
+    {
+      "scenario_id": "sancheti_congestion",
+      "category": "HIGH_DEMAND",
+      "demand_scale": "high",
+      "vehicle_count_approx": 1202,
+      "config_file": "backend/sumo_network/config/sancheti_congestion.sumocfg",
+      "route_file": "backend/sumo_network/routes/congestion.rou.xml",
+      "seed": "unknown",
+      "split": "TRAIN_AND_TEST_temporal"
+    },
+    {
+      "scenario_id": "corridor_camera",
+      "category": "HIGH_DEMAND",
+      "demand_scale": "high",
+      "config_file": "backend/sumo_network/config/corridor_camera.sumocfg",
+      "split": "TRAIN_AND_TEST_temporal"
+    },
+    {
+      "scenario_id": "sancheti_camera",
+      "category": "MEDIUM_DEMAND",
+      "demand_scale": "medium",
+      "config_file": "backend/sumo_network/config/sancheti_camera.sumocfg",
+      "split": "TRAIN_AND_TEST_temporal"
+    },
+    {
+      "scenario_id": "INCIDENT",
+      "category": "INCIDENT",
+      "status": "NOT_AVAILABLE",
+      "note": "No incident route file exists in current SUMO setup"
+    },
+    {
+      "scenario_id": "HEAVY_VEHICLES",
+      "category": "HEAVY_VEHICLES",
+      "status": "NOT_AVAILABLE",
+      "note": "No heavy-vehicle route file exists"
+    },
+    {
+      "scenario_id": "HIGH_MOTORCYCLE",
+      "category": "HIGH_MOTORCYCLE",
+      "status": "NOT_AVAILABLE",
+      "note": "No motorcycle-heavy route file exists"
+    }
+  ]
+}

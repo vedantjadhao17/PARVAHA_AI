@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<additional xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="https://sumo.dlr.de/xsd/additional_file.xsd">
+    <!-- Approach A: Dr. Rajendra Prasad Path / Sangam side. -->
+    <laneAreaDetector id="E2_A_0" lane="195712757_0" pos="0" endPos="35.7"
+                      period="5" file="../outputs/detector_e2.xml" friendlyPos="true"/>
+    <laneAreaDetector id="E2_A_1" lane="195712757_1" pos="0" endPos="35.7"
+                      period="5" file="../outputs/detector_e2.xml" friendlyPos="true"/>
+    <laneAreaDetector id="E2_A_2" lane="195712757_2" pos="0" endPos="35.7"
+                      period="5" file="../outputs/detector_e2.xml" friendlyPos="true"/>
+
+    <!-- Approach B: Bankimchandra Chatopadhyay Path / Ganeshkhind side. -->
+    <laneAreaDetector id="E2_B_0" lane="173045977#1_0" pos="0" endPos="97.1"
+                      period="5" file="../outputs/detector_e2.xml" friendlyPos="true"/>
+    <laneAreaDetector id="E2_B_1" lane="173045977#1_1" pos="0" endPos="97.1"
+                      period="5" file="../outputs/detector_e2.xml" friendlyPos="true"/>
+
+    <!-- Stop-line occupancy supplements the longer upstream zones. -->
+    <laneAreaDetector id="E2_A_STOP_0" lane="661187151#0_0" pos="0" endPos="8.6"
+                      period="5" file="../outputs/detector_e2.xml" friendlyPos="true"/>
+    <laneAreaDetector id="E2_A_STOP_1" lane="661187151#0_1" pos="0" endPos="8.6"
+                      period="5" file="../outputs/detector_e2.xml" friendlyPos="true"/>
+    <laneAreaDetector id="E2_A_STOP_2" lane="661187151#0_2" pos="0" endPos="8.6"
+                      period="5" file="../outputs/detector_e2.xml" friendlyPos="true"/>
+    <laneAreaDetector id="E2_A_STOP_3" lane="661187151#0_3" pos="0" endPos="8.6"
+                      period="5" file="../outputs/detector_e2.xml" friendlyPos="true"/>
+    <laneAreaDetector id="E2_B_STOP_0" lane="1298622049_0" pos="0" endPos="4.1"
+                      period="5" file="../outputs/detector_e2.xml" friendlyPos="true"/>
+    <laneAreaDetector id="E2_B_STOP_1" lane="1298622049_1" pos="0" endPos="4.1"
+                      period="5" file="../outputs/detector_e2.xml" friendlyPos="true"/>
+    <laneAreaDetector id="E2_B_STOP_2" lane="1298622049_2" pos="0" endPos="4.1"
+                      period="5" file="../outputs/detector_e2.xml" friendlyPos="true"/>
+
+    <!-- Downstream loops measure discharged traffic. -->
+    <inductionLoop id="E1_OUT_0" lane="229904828#0_0" pos="15"
+                   period="5" file="../outputs/detector_e1.xml" friendlyPos="true"/>
+    <inductionLoop id="E1_OUT_1" lane="229904828#0_1" pos="15"
+                   period="5" file="../outputs/detector_e1.xml" friendlyPos="true"/>
+    <inductionLoop id="E1_OUT_2" lane="229904828#0_2" pos="15"
+                   period="5" file="../outputs/detector_e1.xml" friendlyPos="true"/>
+</additional>

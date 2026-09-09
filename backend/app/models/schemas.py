@@ -19,7 +19,7 @@ class SignalPlan(BaseModel):
 
 class SafetyResult(BaseModel):
     passed: bool
-    reasons: List[str]
+    violations: List[str]
 
 class CandidateResult(BaseModel):
     candidate_id: str
@@ -34,18 +34,44 @@ class CandidateResult(BaseModel):
     ambulance_transit_time: Optional[float] = None
     recovery_cost: Optional[float] = None
 
+class PredictedDelta(BaseModel):
+    person_delay_pct: float
+    spillback_events: int
+    max_queue_m: float
+
 class Recommendation(BaseModel):
     recommendation_id: str
     generated_at_s: float
     confidence: str
     selected_plan: SignalPlan
     reason_codes: List[str]
-    predicted_delta: Dict[str, float]
+    predicted_delta: PredictedDelta
     safety: SafetyResult
     fallback_plan: SignalPlan
     candidate_results: List[CandidateResult]
     rejected_candidate_reasons: Dict[str, str]
     state_version: str
+
+class LinkState(BaseModel):
+    timestamp_s: int
+    run_id: str
+    scenario_id: str
+    seed: int
+    link_id: str
+    upstream_junction: str
+    downstream_junction: str
+    vehicle_count: int
+    class_counts: Dict[str, int]
+    mean_speed_mps: float
+    occupancy_ratio: float
+    queue_vehicles: int
+    queue_meters: float
+    inflow_veh_per_min: float
+    outflow_veh_per_min: float
+    signal_phase: str
+    phase_remaining_s: float
+    incident_flag: bool
+    weather_code: str
 
 # API Specific Models
 class BaseAPIResponse(BaseModel):
@@ -57,13 +83,14 @@ class AlertSchema(BaseAPIResponse):
     severity: str
     location: str
     affected_approach: str
-    detected_time: str
+    detected_time: datetime
     status: str
     assignee: str
     confidence: float
     expected_in_s: int
     predicted_impact: str
     recommendation_text: str
+    recommendation_id: Optional[str] = None
 
 class OperatorLogSchema(BaseAPIResponse):
     id: str
@@ -76,7 +103,8 @@ class OperatorLogSchema(BaseAPIResponse):
     outcome: str
     audit_hash: str
     note: str = ""
-    recommendation_text: str = ""
+    recommendation_text: str
+    recommendation_id: Optional[str] = None
     safety_validation: Dict[str, bool] = {}
 
 class DeviceSchema(BaseAPIResponse):
@@ -99,4 +127,3 @@ class JunctionSchema(BaseAPIResponse):
     signal_phase: str
     controller_online: bool
     last_update: str
-

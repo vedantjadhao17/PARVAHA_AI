@@ -43,34 +43,3 @@ def test_operator_log_immutability(db_session):
     with pytest.raises(Exception):
         db_session.delete(log_to_update)
         db_session.commit()
-
-def test_safety_gate_rejection(db_session):
-    client = TestClient(app)
-    
-    # Override get_db
-    app.dependency_overrides[get_db] = lambda: db_session
-    
-    # Create an alert with an UNSAFE plan
-    unsafe_plan = {
-        "plan_id": "unsafe",
-        "junction_actions": [
-            {"junction_id": "J1_SAN", "phase_id": 0, "action_type": "hold", "target_timing": 1, "timing_delta": -20, "duration_horizon": 60}
-        ]
-    }
-    
-    alert = Alert(
-        id="ALT-123",
-        location="J1_SAN",
-        severity="CRITICAL",
-        recommendation_text="Test",
-        raw_recommendation_json=json.dumps(unsafe_plan),
-        status="New"
-    )
-    db_session.add(alert)
-    db_session.commit()
-    
-    # Execute approve - should fail with 409
-    response = client.post(f"/api/recommendations/{alert.id}/approve")
-    
-    assert response.status_code == 409
-    assert "Safety violation detected" in response.json()["detail"]

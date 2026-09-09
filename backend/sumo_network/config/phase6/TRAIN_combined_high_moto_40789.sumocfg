@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <input>
+        <net-file value="../../network/sancheti_core.net.xml"/>
+        <route-files value="../../routes/phase6/TRAIN_combined_high_moto_40789.rou.xml"/>
+    </input>
+    <time>
+        <begin value="0"/>
+        <end value="900"/>
+    </time>
+</configuration>

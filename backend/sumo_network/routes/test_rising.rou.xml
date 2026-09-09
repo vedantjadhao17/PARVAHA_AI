@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routes>
+    <vTypeDistribution id="indian_mixed_traffic">
+        <vType id="car" probability="1.0" vClass="passenger" length="4.3" width="1.8" maxSpeed="16.7"/>
+    </vTypeDistribution>
+    
+    <route id="sangam_three_signal" edges="661187163#0 661187163#1-AddedOnRampEdge 661187163#1 661187165 229970360#0 229970360#1 195712757 661187151#0 229904828#0 229904828#1 229904828#2 342557170#0 342557171#0 238836092#0 817900771#0 817900771#1"/>
+    
+    <flow id="f1" type="indian_mixed_traffic" route="sangam_three_signal" begin="0" end="600" vehsPerHour="1000" departLane="best"/>
+</routes>

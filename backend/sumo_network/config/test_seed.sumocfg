@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <input>
+        <net-file value="../network/sancheti_core.net.xml"/>
+    </input>
+    <random_number>
+        <seed value="42"/>
+    </random_number>
+</configuration>

@@ -1,0 +1,11 @@
+fastapi==0.141.1
+uvicorn==0.52.4
+SQLAlchemy==2.0.52
+traci==1.27.1
+sumolib==1.27.1
+websockets==17.1
+pydantic==2.13.5
+httpx==0.28.1
+xgboost==2.0.3
+pandas==2.2.1
+scikit-learn==1.4.1.post1

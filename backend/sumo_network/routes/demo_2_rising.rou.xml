@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routes>
+    <vTypeDistribution id="indian_mixed_traffic">
+        <vType id="motorcycle" probability="0.50" vClass="motorcycle" length="2.0" width="0.72" maxSpeed="16.7"/>
+        <vType id="car" probability="0.30" vClass="passenger" length="4.3" width="1.8" maxSpeed="16.7"/>
+        <vType id="auto_rickshaw" probability="0.15" vClass="passenger" length="2.8" width="1.35" maxSpeed="13.9"/>
+        <vType id="city_bus" probability="0.05" vClass="bus" length="10.5" width="2.5" maxSpeed="11.1"/>
+    </vTypeDistribution>
+
+    <vType id="car_single" vClass="passenger" length="4.3" width="1.8" maxSpeed="16.7" color="255,0,0" guiShape="passenger/sedan"/>
+
+    <!-- Main arterial J1 -> J2 -> J3 (One-way physical constraint J1->J2) -->
+    <route id="sangam_three_signal" edges="661187163#0 661187163#1-AddedOnRampEdge 661187163#1 661187165 229970360#0 229970360#1 195712757 661187151#0 229904828#0 229904828#1 229904828#2 342557170#0 342557171#0 238836092#0 817900771#0 817900771#1"/>
+    <route id="ganeshkhind_three_signal" edges="838145991#2 838145991#3 838145992#0 838145992#1 838145992#2 838145988 173045977#1 1298622049 229904828#0 229904828#1 229904828#2 342557170#0 342557171#0 238836092#0 817900771#0 817900771#1"/>
+    
+    <!-- Reverse arterial J3 -> J2 (Bidirectional physics exist here) -->
+    <route id="north_reverse_two_signal" edges="480167558#2 817900788#0 817900789#0 817900789#3 342557172#0 342557172#1 652398180#0 652398180#3 652398180#4 652398180#5 652398180#8 652398180#9"/>
+    
+    <!-- Cross streets to make the network look alive and urban -->
+    <route id="j2_side_cross" edges="215804435#0 215804435#1 342557172#1 652398180#0 652398180#3 652398180#4 652398180#5 652398180#8 652398180#9"/>
+    <route id="j3_ranade_cross" edges="1359564185#0 1359564185#1 1160332074#0 -215804450#3"/>
+
+
+    <!-- 0-200s: Light -->
+    <flow id="r1_s" type="indian_mixed_traffic" route="sangam_three_signal" begin="0" end="200" vehsPerHour="250" departLane="best"/>
+    <flow id="r1_g" type="indian_mixed_traffic" route="ganeshkhind_three_signal" begin="0" end="200" vehsPerHour="150" departLane="best"/>
+    <flow id="r1_r" type="indian_mixed_traffic" route="north_reverse_two_signal" begin="0" end="200" vehsPerHour="200" departLane="best"/>
+    
+    <!-- 200-400s: Medium -->
+    <flow id="r2_s" type="indian_mixed_traffic" route="sangam_three_signal" begin="200" end="400" vehsPerHour="800" departLane="best"/>
+    <flow id="r2_g" type="indian_mixed_traffic" route="ganeshkhind_three_signal" begin="200" end="400" vehsPerHour="600" departLane="best"/>
+    <flow id="r2_r" type="indian_mixed_traffic" route="north_reverse_two_signal" begin="200" end="400" vehsPerHour="600" departLane="best"/>
+    
+    <!-- 400-600s: Heavy (to breach HIGH threshold > 181.5m at J3) -->
+    <flow id="r3_s" type="indian_mixed_traffic" route="sangam_three_signal" begin="400" end="600" vehsPerHour="1800" departLane="best"/>
+    <flow id="r3_g" type="indian_mixed_traffic" route="ganeshkhind_three_signal" begin="400" end="600" vehsPerHour="1200" departLane="best"/>
+    <flow id="r3_r" type="indian_mixed_traffic" route="north_reverse_two_signal" begin="400" end="600" vehsPerHour="1000" departLane="best"/>
+
+    <flow id="n_j2" type="indian_mixed_traffic" route="j2_side_cross" begin="0" end="600" vehsPerHour="200" departLane="best"/>
+    <flow id="n_j3" type="indian_mixed_traffic" route="j3_ranade_cross" begin="0" end="600" vehsPerHour="200" departLane="best"/>
+</routes>

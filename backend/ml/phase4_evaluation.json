@@ -1,0 +1,35 @@
+{
+  "HOLD": {
+    "demand": "congestion",
+    "mode": "HOLD",
+    "duration_s": 600,
+    "interventions": 0,
+    "avg_queue_m": 0.0,
+    "avg_speed_kmh": 0.0,
+    "avg_halting": 0.0,
+    "queue_improvement_pct": 0.0,
+    "speed_improvement_pct": 0.0
+  },
+  "SINGLE_JUNCTION": {
+    "demand": "congestion",
+    "mode": "SINGLE_JUNCTION",
+    "duration_s": 600,
+    "interventions": 0,
+    "avg_queue_m": 0.0,
+    "avg_speed_kmh": 0.0,
+    "avg_halting": 0.0,
+    "queue_improvement_pct": 0.0,
+    "speed_improvement_pct": 0.0
+  },
+  "CORRIDOR": {
+    "demand": "congestion",
+    "mode": "CORRIDOR",
+    "duration_s": 600,
+    "interventions": 0,
+    "avg_queue_m": 0.0,
+    "avg_speed_kmh": 0.0,
+    "avg_halting": 0.0,
+    "queue_improvement_pct": 0.0,
+    "speed_improvement_pct": 0.0
+  }
+}

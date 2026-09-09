@@ -1,0 +1,148 @@
+{
+  "corridor_id": "pravaha_shivajinagar_three_signal_corridor",
+  "sample_period_s": 5,
+  "junctions": {
+    "J1_SAN": {
+      "tls_id": "cluster_13546492148_1838721956",
+      "label": "Sancheti Chowk",
+      "approaches": {
+        "SANGAM": {
+          "label": "Dr. Rajendra Prasad Path",
+          "green_phases": [
+            0
+          ],
+          "detectors": [
+            "E2_J1_SAN_SANGAM_0_0",
+            "E2_J1_SAN_SANGAM_0_1",
+            "E2_J1_SAN_SANGAM_0_2",
+            "E2_J1_SAN_SANGAM_1_0",
+            "E2_J1_SAN_SANGAM_1_1",
+            "E2_J1_SAN_SANGAM_1_2",
+            "E2_J1_SAN_SANGAM_1_3"
+          ]
+        },
+        "GANESHKHIND": {
+          "label": "Bankimchandra Chatopadhyay Path",
+          "green_phases": [
+            2
+          ],
+          "detectors": [
+            "E2_J1_SAN_GANESHKHIND_0_0",
+            "E2_J1_SAN_GANESHKHIND_0_1",
+            "E2_J1_SAN_GANESHKHIND_1_0",
+            "E2_J1_SAN_GANESHKHIND_1_1",
+            "E2_J1_SAN_GANESHKHIND_1_2"
+          ]
+        }
+      },
+      "outflow_loops": [
+        "E1_J1_SAN_OUT_0_0",
+        "E1_J1_SAN_OUT_0_1",
+        "E1_J1_SAN_OUT_0_2",
+        "E1_J1_SAN_OUT_1_0",
+        "E1_J1_SAN_OUT_1_1",
+        "E1_J1_SAN_OUT_1_2"
+      ]
+    },
+    "J2_SJM": {
+      "tls_id": "cluster_2061304035_245647208",
+      "label": "Shivaji Road\u2013JM Path",
+      "approaches": {
+        "FROM_SAN": {
+          "label": "From Sancheti",
+          "green_phases": [
+            0,
+            2
+          ],
+          "detectors": [
+            "E2_J2_SJM_FROM_SAN_0_0",
+            "E2_J2_SJM_FROM_SAN_0_1",
+            "E2_J2_SJM_FROM_SAN_0_2",
+            "E2_J2_SJM_FROM_SAN_1_0",
+            "E2_J2_SJM_FROM_SAN_1_1",
+            "E2_J2_SJM_FROM_SAN_1_2"
+          ]
+        },
+        "SHIVAJI_SIDE": {
+          "label": "Shivaji Road side approach",
+          "green_phases": [
+            0
+          ],
+          "detectors": [
+            "E2_J2_SJM_SHIVAJI_SIDE_0_0",
+            "E2_J2_SJM_SHIVAJI_SIDE_1_0"
+          ]
+        }
+      },
+      "outflow_loops": [
+        "E1_J2_SJM_OUT_0_0",
+        "E1_J2_SJM_OUT_1_0",
+        "E1_J2_SJM_OUT_1_1"
+      ]
+    },
+    "J3_SAP": {
+      "tls_id": "cluster_245647168_3238255150_3495323634",
+      "label": "Shivaji Road\u2013Apte Path",
+      "approaches": {
+        "FROM_J2": {
+          "label": "Shivaji Road from J2",
+          "green_phases": [
+            0
+          ],
+          "detectors": [
+            "E2_J3_SAP_FROM_J2_0_0",
+            "E2_J3_SAP_FROM_J2_1_0",
+            "E2_J3_SAP_FROM_J2_1_1"
+          ]
+        },
+        "NORTH_SHIVAJI": {
+          "label": "North Shivaji Road",
+          "green_phases": [
+            0
+          ],
+          "detectors": [
+            "E2_J3_SAP_NORTH_SHIVAJI_0_0",
+            "E2_J3_SAP_NORTH_SHIVAJI_1_0",
+            "E2_J3_SAP_NORTH_SHIVAJI_1_1",
+            "E2_J3_SAP_NORTH_SHIVAJI_1_2"
+          ]
+        },
+        "RANADE": {
+          "label": "Nyaymurti Ranade Path",
+          "green_phases": [
+            2
+          ],
+          "detectors": [
+            "E2_J3_SAP_RANADE_0_0",
+            "E2_J3_SAP_RANADE_1_0"
+          ]
+        },
+        "APTE": {
+          "label": "Anna Saheb Apte Path",
+          "green_phases": [
+            6
+          ],
+          "detectors": [
+            "E2_J3_SAP_APTE_0_0",
+            "E2_J3_SAP_APTE_1_0"
+          ]
+        },
+        "BAHIRAT": {
+          "label": "Baburao Baloba Bahirat Path",
+          "green_phases": [
+            4
+          ],
+          "detectors": [
+            "E2_J3_SAP_BAHIRAT_0_0",
+            "E2_J3_SAP_BAHIRAT_1_0"
+          ]
+        }
+      },
+      "outflow_loops": [
+        "E1_J3_SAP_OUT_0_0",
+        "E1_J3_SAP_OUT_0_1",
+        "E1_J3_SAP_OUT_1_0"
+      ]
+    }
+  }
+}

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://sumo.dlr.de/xsd/routes_file.xsd">
+    <!-- Prototype mixed traffic. Calibrate these values with field counts before real claims. -->
+    <vTypeDistribution id="indian_mixed_traffic">
+        <vType id="motorcycle" probability="0.50" vClass="motorcycle"
+               length="2.0" width="0.72" minGap="1.0"
+               accel="3.2" decel="6.0" emergencyDecel="9.0" sigma="0.75"
+               maxSpeed="16.7" speedFactor="1.0" speedDev="0.07"
+               latAlignment="arbitrary" minGapLat="0.45"
+               lcPushy="0.0" lcAssertive="1.0" lcImpatience="0.0"
+               lcCooperative="1.0" lcSpeedGain="0.5"
+               color="55,225,80" guiShape="motorcycle"/>
+        <vType id="auto_rickshaw" probability="0.12" vClass="passenger"
+               length="2.8" width="1.35" minGap="1.0"
+               accel="2.2" decel="5.0" emergencyDecel="8.0" sigma="0.7"
+               maxSpeed="13.9" speedFactor="0.92" speedDev="0.10"
+               latAlignment="arbitrary" minGapLat="0.40"
+               lcPushy="0.0" lcAssertive="1.0" lcImpatience="0.0"
+               lcCooperative="1.0" lcSpeedGain="0.5"
+               color="250,205,35" guiShape="passenger/hatchback"/>
+        <vType id="car" probability="0.27" vClass="passenger"
+               length="4.3" width="1.8" minGap="1.7"
+               accel="2.6" decel="4.8" emergencyDecel="8.0" sigma="0.55"
+               maxSpeed="16.7" speedFactor="1.0" speedDev="0.10"
+               latAlignment="arbitrary" minGapLat="0.50"
+               lcPushy="0.0" lcAssertive="1.0" lcImpatience="0.0"
+               color="75,205,255" guiShape="passenger/sedan"/>
+        <vType id="city_bus" probability="0.08" vClass="bus"
+               length="10.5" width="2.5" minGap="2.2"
+               accel="1.2" decel="4.0" emergencyDecel="7.0" sigma="0.45"
+               maxSpeed="13.9" speedFactor="0.88" speedDev="0.07"
+               latAlignment="center" minGapLat="0.45"
+               lcPushy="0.05" lcAssertive="0.9" lcImpatience="0.1"
+               color="65,125,240" guiShape="bus"/>
+        <vType id="goods_vehicle" probability="0.03" vClass="truck"
+               length="7.0" width="2.35" minGap="2.0"
+               accel="1.1" decel="3.8" emergencyDecel="7.0" sigma="0.5"
+               maxSpeed="12.5" speedFactor="0.85" speedDev="0.08"
+               latAlignment="center" minGapLat="0.45"
+               lcPushy="0.05" lcAssertive="0.85" lcImpatience="0.1"
+               color="255,140,45" guiShape="truck"/>
+    </vTypeDistribution>
+
+    <!-- These two routes cross J1, J2, and J3 in order. -->
+    <route id="sangam_three_signal"
+           edges="661187163#0 661187163#1-AddedOnRampEdge 661187163#1 661187165 229970360#0 229970360#1 195712757 661187151#0 229904828#0 229904828#1 229904828#2 342557170#0 342557171#0 238836092#0 817900771#0 817900771#1"/>
+    <route id="ganeshkhind_three_signal"
+           edges="838145991#2 838145991#3 838145992#0 838145992#1 838145992#2 838145988 173045977#1 1298622049 229904828#0 229904828#1 229904828#2 342557170#0 342557171#0 238836092#0 817900771#0 817900771#1"/>
+
+    <!-- Supporting demand traverses J3/J2 in the reverse direction and side approaches. -->
+    <route id="north_reverse_two_signal"
+           edges="480167558#2 817900788#0 817900789#0 817900789#3 342557172#0 342557172#1 652398180#0 652398180#3 652398180#4 652398180#5 652398180#8 652398180#9"/>
+    <route id="j2_side_cross"
+           edges="215804435#0 215804435#1 342557172#1 652398180#0 652398180#3 652398180#4 652398180#5 652398180#8 652398180#9"/>
+    <route id="j3_ranade_cross"
+           edges="1359564185#0 1359564185#1 1160332074#0 -215804450#3"/>
+
+    <!-- 0-120 s: normal corridor traffic. -->
+    <flow id="normal_sangam" type="indian_mixed_traffic" route="sangam_three_signal"
+          begin="0" end="120" vehsPerHour="500" departLane="best" departSpeed="max"/>
+    <flow id="normal_ganeshkhind" type="indian_mixed_traffic" route="ganeshkhind_three_signal"
+          begin="0" end="120" vehsPerHour="400" departLane="best" departSpeed="max"/>
+    <flow id="normal_reverse" type="indian_mixed_traffic" route="north_reverse_two_signal"
+          begin="0" end="120" vehsPerHour="350" departLane="best" departSpeed="max"/>
+    <flow id="normal_j2_side" type="indian_mixed_traffic" route="j2_side_cross"
+          begin="0" end="120" vehsPerHour="300" departLane="best" departSpeed="max"/>
+    <flow id="normal_j3_side" type="indian_mixed_traffic" route="j3_ranade_cross"
+          begin="0" end="120" vehsPerHour="300" departLane="best" departSpeed="max"/>
+
+    <!-- 120-420 s: deliberate platoon surge propagates from J1 to J2 and J3. -->
+    <flow id="surge_sangam" type="indian_mixed_traffic" route="sangam_three_signal"
+          begin="120" end="420" vehsPerHour="1800" departLane="best" departSpeed="max"/>
+    <flow id="surge_ganeshkhind" type="indian_mixed_traffic" route="ganeshkhind_three_signal"
+          begin="120" end="420" vehsPerHour="1100" departLane="best" departSpeed="max"/>
+    <flow id="surge_reverse" type="indian_mixed_traffic" route="north_reverse_two_signal"
+          begin="120" end="420" vehsPerHour="600" departLane="best" departSpeed="max"/>
+    <flow id="surge_j2_side" type="indian_mixed_traffic" route="j2_side_cross"
+          begin="120" end="420" vehsPerHour="500" departLane="best" departSpeed="max"/>
+    <flow id="surge_j3_side" type="indian_mixed_traffic" route="j3_ranade_cross"
+          begin="120" end="420" vehsPerHour="500" departLane="best" departSpeed="max"/>
+
+    <!-- 420-600 s: reduced demand exposes corridor recovery. -->
+    <flow id="recovery_sangam" type="indian_mixed_traffic" route="sangam_three_signal"
+          begin="420" end="600" vehsPerHour="600" departLane="best" departSpeed="max"/>
+    <flow id="recovery_ganeshkhind" type="indian_mixed_traffic" route="ganeshkhind_three_signal"
+          begin="420" end="600" vehsPerHour="450" departLane="best" departSpeed="max"/>
+    <flow id="recovery_reverse" type="indian_mixed_traffic" route="north_reverse_two_signal"
+          begin="420" end="600" vehsPerHour="350" departLane="best" departSpeed="max"/>
+    <flow id="recovery_j2_side" type="indian_mixed_traffic" route="j2_side_cross"
+          begin="420" end="600" vehsPerHour="300" departLane="best" departSpeed="max"/>
+    <flow id="recovery_j3_side" type="indian_mixed_traffic" route="j3_ranade_cross"
+          begin="420" end="600" vehsPerHour="300" departLane="best" departSpeed="max"/>
+</routes>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<additional xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://sumo.dlr.de/xsd/additional_file.xsd">
+    <laneAreaDetector id="E2_J1_SAN_SANGAM_0_0" lane="195712757_0" pos="0" endPos="35.74" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J1_SAN_SANGAM_0_1" lane="195712757_1" pos="0" endPos="35.74" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J1_SAN_SANGAM_0_2" lane="195712757_2" pos="0" endPos="35.74" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J1_SAN_SANGAM_1_0" lane="661187151#0_0" pos="0" endPos="8.65" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J1_SAN_SANGAM_1_1" lane="661187151#0_1" pos="0" endPos="8.65" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J1_SAN_SANGAM_1_2" lane="661187151#0_2" pos="0" endPos="8.65" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J1_SAN_SANGAM_1_3" lane="661187151#0_3" pos="0" endPos="8.65" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J1_SAN_GANESHKHIND_0_0" lane="173045977#1_0" pos="0" endPos="97.19" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J1_SAN_GANESHKHIND_0_1" lane="173045977#1_1" pos="0" endPos="97.19" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J1_SAN_GANESHKHIND_1_0" lane="1298622049_0" pos="0" endPos="4.15" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J1_SAN_GANESHKHIND_1_1" lane="1298622049_1" pos="0" endPos="4.15" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J1_SAN_GANESHKHIND_1_2" lane="1298622049_2" pos="0" endPos="4.15" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <inductionLoop id="E1_J1_SAN_OUT_0_0" lane="229904828#0_0" pos="15.00" period="5" file="../outputs/corridor_detector_e1.xml" friendlyPos="true" />
+    <inductionLoop id="E1_J1_SAN_OUT_0_1" lane="229904828#0_1" pos="15.00" period="5" file="../outputs/corridor_detector_e1.xml" friendlyPos="true" />
+    <inductionLoop id="E1_J1_SAN_OUT_0_2" lane="229904828#0_2" pos="15.00" period="5" file="../outputs/corridor_detector_e1.xml" friendlyPos="true" />
+    <inductionLoop id="E1_J1_SAN_OUT_1_0" lane="229904828#1_0" pos="15.00" period="5" file="../outputs/corridor_detector_e1.xml" friendlyPos="true" />
+    <inductionLoop id="E1_J1_SAN_OUT_1_1" lane="229904828#1_1" pos="15.00" period="5" file="../outputs/corridor_detector_e1.xml" friendlyPos="true" />
+    <inductionLoop id="E1_J1_SAN_OUT_1_2" lane="229904828#1_2" pos="15.00" period="5" file="../outputs/corridor_detector_e1.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J2_SJM_FROM_SAN_0_0" lane="229904828#1_0" pos="0" endPos="43.33" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J2_SJM_FROM_SAN_0_1" lane="229904828#1_1" pos="0" endPos="43.33" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J2_SJM_FROM_SAN_0_2" lane="229904828#1_2" pos="0" endPos="43.33" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J2_SJM_FROM_SAN_1_0" lane="229904828#2_0" pos="0" endPos="29.62" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J2_SJM_FROM_SAN_1_1" lane="229904828#2_1" pos="0" endPos="29.62" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J2_SJM_FROM_SAN_1_2" lane="229904828#2_2" pos="0" endPos="29.62" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J2_SJM_SHIVAJI_SIDE_0_0" lane="215804435#1_0" pos="0" endPos="57.04" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J2_SJM_SHIVAJI_SIDE_1_0" lane="342557172#1_0" pos="0" endPos="53.49" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <inductionLoop id="E1_J2_SJM_OUT_0_0" lane="342557170#0_0" pos="15.00" period="5" file="../outputs/corridor_detector_e1.xml" friendlyPos="true" />
+    <inductionLoop id="E1_J2_SJM_OUT_1_0" lane="342557171#0_0" pos="15.00" period="5" file="../outputs/corridor_detector_e1.xml" friendlyPos="true" />
+    <inductionLoop id="E1_J2_SJM_OUT_1_1" lane="342557171#0_1" pos="15.00" period="5" file="../outputs/corridor_detector_e1.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J3_SAP_FROM_J2_0_0" lane="342557170#0_0" pos="0" endPos="147.63" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J3_SAP_FROM_J2_1_0" lane="342557171#0_0" pos="0" endPos="95.28" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J3_SAP_FROM_J2_1_1" lane="342557171#0_1" pos="0" endPos="95.28" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J3_SAP_NORTH_SHIVAJI_0_0" lane="817900788#0_0" pos="0" endPos="14.99" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J3_SAP_NORTH_SHIVAJI_1_0" lane="817900789#0_0" pos="0" endPos="74.65" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J3_SAP_NORTH_SHIVAJI_1_1" lane="817900789#0_1" pos="0" endPos="74.65" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J3_SAP_NORTH_SHIVAJI_1_2" lane="817900789#0_2" pos="0" endPos="74.65" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J3_SAP_RANADE_0_0" lane="1359564185#0_0" pos="0" endPos="38.10" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J3_SAP_RANADE_1_0" lane="1359564185#1_0" pos="0" endPos="29.58" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J3_SAP_APTE_0_0" lane="-290390083#1_0" pos="0" endPos="20.32" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J3_SAP_APTE_1_0" lane="-1160332074#1_0" pos="0" endPos="42.38" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J3_SAP_BAHIRAT_0_0" lane="-68573854#3_0" pos="0" endPos="42.31" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <laneAreaDetector id="E2_J3_SAP_BAHIRAT_1_0" lane="-68573854#1_0" pos="0" endPos="72.55" period="5" file="../outputs/corridor_detector_e2.xml" friendlyPos="true" />
+    <inductionLoop id="E1_J3_SAP_OUT_0_0" lane="238836092#0_0" pos="15.00" period="5" file="../outputs/corridor_detector_e1.xml" friendlyPos="true" />
+    <inductionLoop id="E1_J3_SAP_OUT_0_1" lane="238836092#0_1" pos="15.00" period="5" file="../outputs/corridor_detector_e1.xml" friendlyPos="true" />
+    <inductionLoop id="E1_J3_SAP_OUT_1_0" lane="817900771#0_0" pos="0.10" period="5" file="../outputs/corridor_detector_e1.xml" friendlyPos="true" />
+</additional>

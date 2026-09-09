@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2026-08-27 20:41:09.184720 by Eclipse SUMO randomTrips.py v1.27.1
+<configuration>
+    <net-file value="/workspace/scratch/29d214e3b756/pravaha-sancheti-sumo/network/sancheti_core.net.xml"/>
+    <output-trip-file value="/workspace/scratch/29d214e3b756/pravaha-sancheti-sumo/routes/smoke.trips.xml"/>
+    <route-file value="/workspace/scratch/29d214e3b756/pravaha-sancheti-sumo/routes/smoke.rou.xml"/>
+    <prefix value="smoke_"/>
+    <trip-attributes value="departLane=&quot;best&quot; departSpeed=&quot;max&quot;"/>
+    <vehicle-class value="passenger"/>
+    <min-distance value="500.0"/>
+    <remove-loops value="True"/>
+    <end value="300.0"/>
+    <period value="8.0"/>
+</configuration>
+-->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+    <vType id="smoke__passenger" vClass="passenger"/>
+    <trip id="smoke_0" depart="0.00" from="229970356" to="218681353#0" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_1" depart="8.00" from="661187152#1" to="-1358505443" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_2" depart="16.00" from="1117996527" to="-1117985115" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_3" depart="24.00" from="-227095245#0" to="1271717660#3" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_4" depart="32.00" from="217278840#0" to="169704106#3" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_5" depart="40.00" from="404097837#2" to="-106359291#3" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_6" depart="48.00" from="354761031#1" to="22840963#2" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_7" depart="56.00" from="-667524680#3" to="-215804480#2" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_8" depart="64.00" from="-1207654653#1" to="-1552460810" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_9" depart="72.00" from="53759316" to="215804435#1" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_10" depart="80.00" from="151723528#1" to="838145989" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_11" depart="88.00" from="-859142176#1" to="198565142#3" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_12" depart="96.00" from="53091521#0" to="215804461#2" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_13" depart="104.00" from="567624077#5" to="211082574#2" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_14" depart="112.00" from="-22840920#7" to="-53759820#0" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_15" depart="120.00" from="215804482#2" to="106359312#3" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_16" depart="128.00" from="-858888368" to="-22840963#8" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_17" depart="136.00" from="-282054956#3" to="815335434#2" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_18" depart="144.00" from="217278812" to="215804449#1" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_19" depart="152.00" from="-215804455#1" to="229904829#0" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_20" depart="160.00" from="-215804449#0" to="1088755908#0" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_21" depart="168.00" from="859121117#6" to="217278794#0" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_22" depart="176.00" from="198565148#0" to="227095245#2" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_23" depart="184.00" from="53201054#1" to="282102102" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_24" depart="192.00" from="-22840920#9" to="-1117999823" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_25" depart="200.00" from="-218059626#1" to="815393919#1" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_26" depart="208.00" from="61969075#0" to="-689877945" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_27" depart="216.00" from="217278860#3" to="1117981187" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_28" depart="224.00" from="-282054955" to="-282484466#1" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_29" depart="232.00" from="206994688" to="-53091521#1" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_30" depart="240.00" from="211082580#1" to="661187163#0" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_31" depart="248.00" from="106359461#7" to="-22841229#12" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_32" depart="256.00" from="994827641" to="1292086492" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_33" depart="264.00" from="-1198626119" to="-1126679747#6" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_34" depart="272.00" from="-1229442750#1" to="215804480#4" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_35" depart="280.00" from="-1119837536#0" to="1111958633" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_36" depart="288.00" from="859221712" to="1468645693#4" departLane="best" departSpeed="max" type="smoke__passenger"/>
+    <trip id="smoke_37" depart="296.00" from="838145991#3" to="567624077#2" departLane="best" departSpeed="max" type="smoke__passenger"/>
+</routes>

@@ -7,6 +7,21 @@
     <title>frontend</title>
   </head>
   <body>
+    <div id="error-box" style="color: red; padding: 20px; font-family: monospace; z-index: 99999; position: absolute; background: black;"></div>
+    <script>
+      window.addEventListener('error', function(e) {
+        document.getElementById('error-box').innerText += e.message + '\n' + e.filename + ':' + e.lineno + '\n';
+      });
+      window.addEventListener('unhandledrejection', function(e) {
+        document.getElementById('error-box').innerText += 'Promise Rejection: ' + e.reason + '\n';
+      });
+      // also monkey patch console.error
+      const oldErr = console.error;
+      console.error = function(...args) {
+        document.getElementById('error-box').innerText += 'CONSOLE ERROR: ' + args.join(' ') + '\n';
+        oldErr.apply(console, args);
+      }
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

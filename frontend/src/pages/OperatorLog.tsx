@@ -20,7 +20,7 @@ export const OperatorLog = () => {
     fetch('http://localhost:8000/api/operator-log')
       .then(res => res.json())
       .then(data => {
-        setLogs(data);
+        if (Array.isArray(data)) setLogs(data); else setLogs([]);
         setLoading(false);
       })
       .catch(err => {

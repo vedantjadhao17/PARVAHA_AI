@@ -62,4 +62,58 @@ class Device(Base):
     data_quality = Column(Float)
     uptime = Column(Float)
 
+
+
+class RecommendationOutcome(Base):
+    __tablename__ = "recommendation_outcomes"
+    id = Column(String, primary_key=True, index=True)
+    recommendation_id = Column(String, index=True)
+    junction_id = Column(String)
+    tls_id = Column(String)
+    candidate_id = Column(String)
+    approval_timestamp = Column(DateTime, default=datetime.utcnow)
+    application_sim_time_s = Column(Float)
+
+    # Pre-application state
+    pre_queue_m = Column(Float)
+    pre_vehicle_count = Column(Integer)
+    pre_avg_speed_kmh = Column(Float)
+
+    # Predictions
+    predicted_queue_m = Column(Float)
+    predicted_capacity_ratio = Column(Float)
+    counterfactual_hold_score = Column(Float)
+    counterfactual_candidate_score = Column(Float)
+
+    # Observed post-application state
+    post_30s_queue_m = Column(Float, nullable=True)
+    post_60s_queue_m = Column(Float, nullable=True)
+    post_90s_queue_m = Column(Float, nullable=True)
+    post_120s_queue_m = Column(Float, nullable=True)
+    post_120s_avg_speed_kmh = Column(Float, nullable=True)
+    post_120s_vehicle_count = Column(Integer, nullable=True)
+
+    # Derived improvements vs pre-application
+    queue_delta_m = Column(Float, nullable=True)
+    queue_improvement_pct = Column(Float, nullable=True)
+    speed_delta_kmh = Column(Float, nullable=True)
+    speed_improvement_pct = Column(Float, nullable=True)
+    halting_delta = Column(Float, nullable=True) # Approx via queue_m / 5
+    halting_improvement_pct = Column(Float, nullable=True)
+
+    # Tracker lifecycle
+    status = Column(String) # ACTIVE, OBSERVING, COMPLETED, INTERRUPTED
+
+
+class TelemetryHistory(Base):
+    __tablename__ = "telemetry_history"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    recorded_at = Column(DateTime, default=datetime.utcnow)
+    scenario_id = Column(String, index=True)
+    simulation_time_s = Column(Float)
+    junction_id = Column(String, index=True)
+    queue_length_m = Column(Float)
+    vehicle_count = Column(Integer)
+    avg_speed_kmh = Column(Float)
+
 Base.metadata.create_all(bind=engine)

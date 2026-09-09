@@ -1,0 +1,5 @@
+{
+  "min_person_delay_improvement_pct": 5.0,
+  "prioritize_spillback": true,
+  "counterfactual_horizon_s": 600
+}

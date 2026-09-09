@@ -1,0 +1,14 @@
+{
+  "train": [
+    "corridor_baseline_seed43_scale0.8",
+    "corridor_baseline_seed45_scale1.1",
+    "corridor_baseline_seed47_scale1.4"
+  ],
+  "validation": [
+    "corridor_baseline_seed48_scale0.95"
+  ],
+  "test": [
+    "corridor_baseline_seed42_scale0.65",
+    "corridor_baseline_seed50_scale1.25"
+  ]
+}

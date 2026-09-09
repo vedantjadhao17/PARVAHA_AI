@@ -90,27 +90,32 @@ class _GeoConverter:
         self._ox    = 0.0
         self._oy    = 0.0
 
-        if not self._has:
-            # Read raw location element directly from the net XML
-            try:
-                loc = net.getLocationOffset()      # (xOff, yOff)
-                self._ox, self._oy = loc
-            except Exception:
-                self._ox, self._oy = 0.0, 0.0
+        # Always parse offsets, regardless of self._has, to ensure fallback is ready
+        try:
+            loc = net.getLocationOffset()      # (xOff, yOff)
+            self._ox, self._oy = loc
+        except Exception:
+            pass
 
-            try:
-                proj_str = net._location.get("projParameter", "")
-                self._zone, self._south = _parse_utm_zone(proj_str)
-            except Exception:
-                pass   # keep defaults (UTM 43N)
+        try:
+            proj_str = net._location.get("projParameter", "")
+            self._zone, self._south = _parse_utm_zone(proj_str)
+        except Exception:
+            pass
 
     def convert(self, x: float, y: float):
+        # Attempt native sumolib conversion first
         if self._has:
-            lon, lat = self._net.convertXY2LonLat(x, y)
-            return lon, lat
-        # Manual: undo netOffset, then inverse UTM
-        easting  = x + self._ox
-        northing = y + self._oy
+            try:
+                lon, lat = self._net.convertXY2LonLat(x, y)
+                return lon, lat
+            except Exception:
+                pass # Proceed to fallback if pyproj/proj.db is missing
+
+        # Fallback Manual Inverse UTM
+        # Undo netOffset (SUMO_X = Easting + xOff => Easting = SUMO_X - xOff)
+        easting  = x - self._ox
+        northing = y - self._oy
         return _utm_to_lonlat(easting, northing, self._zone, self._south)
 
     @property

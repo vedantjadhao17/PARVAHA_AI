@@ -17,8 +17,8 @@ import {
 interface JunctionLiveData {
   id: string;
   name: string;
-  queue_m: number;
-  active_vehicles: number;
+  queue_m: number | null;
+  active_vehicles: number | null;
   signal_state: 'GREEN' | 'YELLOW' | 'RED' | 'UNKNOWN';
   status: string;
 }
@@ -41,21 +41,24 @@ interface JunctionConfig {
   }[];
 }
 
-const getStatusColor = (queueM: number, status: string) => {
+const getStatusColor = (queueM: number | null, status: string) => {
+  if (queueM == null) return "text-gray-400";
   if (status === 'Severe' || queueM >= 100) return 'text-status-red';
   if (queueM >= 50) return 'text-status-orange';
   if (queueM >= 20) return 'text-status-amber';
   return 'text-status-green';
 };
 
-const getStatusBg = (queueM: number, status: string) => {
+const getStatusBg = (queueM: number | null, status: string) => {
+  if (queueM == null) return "bg-gray-600";
   if (status === 'Severe' || queueM >= 100) return 'bg-status-red';
   if (queueM >= 50) return 'bg-status-orange';
   if (queueM >= 20) return 'bg-status-amber';
   return 'bg-status-green';
 };
 
-const getStatusLabel = (queueM: number, status: string) => {
+const getStatusLabel = (queueM: number | null, status: string) => {
+  if (queueM == null) return "Offline";
   if (status === 'Severe' || queueM >= 100) return 'Severe';
   if (queueM >= 50) return 'Heavy';
   if (queueM >= 20) return 'Moderate';
@@ -132,10 +135,10 @@ export const Junctions = () => {
     const total = junctions.length;
     const avgQueue =
       total > 0
-        ? (junctions.reduce((sum, j) => sum + j.queue_m, 0) / total).toFixed(1)
+        ? (junctions.reduce((sum, j) => sum + (j.queue_m ?? 0), 0) / total).toFixed(1)
         : '0.0';
     const severe = junctions.filter(
-      (j) => j.status === 'Severe' || j.queue_m >= 100
+      (j) => j.status === 'Severe' || j.queue_m != null && j.queue_m != null && j.queue_m >= 100
     ).length;
     const activeAlerts = state?.active_alerts?.length || 0;
     return { total, avgQueue, severe, activeAlerts };
@@ -291,7 +294,7 @@ export const Junctions = () => {
                       </td>
                       <td className="px-4 py-3 text-right">
                         <span className={`font-mono font-semibold ${statusColor}`}>
-                          {junction.queue_m.toFixed(1)}
+                          {junction.queue_m != null ? junction.queue_m.toFixed(1) : "N/A"}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right">
@@ -367,7 +370,7 @@ export const Junctions = () => {
                 <div
                   className={`text-xl font-bold font-mono ${getStatusColor(selectedData.queue_m, selectedData.status)}`}
                 >
-                  {selectedData.queue_m.toFixed(1)}m
+                  {selectedData.queue_m != null ? `${selectedData.queue_m.toFixed(1)}m` : "N/A"}
                 </div>
               </div>
               <div className="bg-navy-900 rounded-lg p-3">

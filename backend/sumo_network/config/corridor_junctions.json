@@ -1,0 +1,104 @@
+{
+  "corridor_id": "pravaha_shivajinagar_three_signal_corridor",
+  "status": "simulation prototype; not field calibrated",
+  "sample_period_s": 5,
+  "prediction_horizon_s": 90,
+  "junctions": [
+    {
+      "junction_id": "J1_SAN",
+      "order": 1,
+      "tls_id": "cluster_13546492148_1838721956",
+      "label": "Sancheti Chowk",
+      "distance_from_previous_m": 0.0,
+      "downstream_junction_id": "J2_SJM",
+      "corridor_green_phase": 0,
+      "yellow_phases": [1, 3],
+      "camera": {"x": 1149.57, "y": 1522.28, "zoom": 4600, "angle": 42},
+      "approaches": [
+        {
+          "approach_id": "SANGAM",
+          "label": "Dr. Rajendra Prasad Path",
+          "green_phases": [0],
+          "edges": ["195712757", "661187151#0"]
+        },
+        {
+          "approach_id": "GANESHKHIND",
+          "label": "Bankimchandra Chatopadhyay Path",
+          "green_phases": [2],
+          "edges": ["173045977#1", "1298622049"]
+        }
+      ],
+      "downstream_edges": ["229904828#0", "229904828#1"]
+    },
+    {
+      "junction_id": "J2_SJM",
+      "order": 2,
+      "tls_id": "cluster_2061304035_245647208",
+      "label": "Shivaji Road–JM Path",
+      "distance_from_previous_m": 188.4,
+      "downstream_junction_id": "J3_SAP",
+      "corridor_green_phase": 0,
+      "yellow_phases": [1, 3],
+      "camera": {"x": 1011.61, "y": 1343.22, "zoom": 4200, "angle": 42},
+      "approaches": [
+        {
+          "approach_id": "FROM_SAN",
+          "label": "From Sancheti",
+          "green_phases": [0, 2],
+          "edges": ["229904828#1", "229904828#2"]
+        },
+        {
+          "approach_id": "SHIVAJI_SIDE",
+          "label": "Shivaji Road side approach",
+          "green_phases": [0],
+          "edges": ["215804435#1", "342557172#1"]
+        }
+      ],
+      "downstream_edges": ["342557170#0", "342557171#0"]
+    },
+    {
+      "junction_id": "J3_SAP",
+      "order": 3,
+      "tls_id": "cluster_245647168_3238255150_3495323634",
+      "label": "Shivaji Road–Apte Path",
+      "distance_from_previous_m": 242.9,
+      "downstream_junction_id": null,
+      "corridor_green_phase": 0,
+      "yellow_phases": [1, 3, 5, 7],
+      "camera": {"x": 1223.60, "y": 1165.44, "zoom": 3200, "angle": 42},
+      "approaches": [
+        {
+          "approach_id": "FROM_J2",
+          "label": "Shivaji Road from J2",
+          "green_phases": [0],
+          "edges": ["342557170#0", "342557171#0"]
+        },
+        {
+          "approach_id": "NORTH_SHIVAJI",
+          "label": "North Shivaji Road",
+          "green_phases": [0],
+          "edges": ["817900788#0", "817900789#0"]
+        },
+        {
+          "approach_id": "RANADE",
+          "label": "Nyaymurti Ranade Path",
+          "green_phases": [2],
+          "edges": ["1359564185#0", "1359564185#1"]
+        },
+        {
+          "approach_id": "APTE",
+          "label": "Anna Saheb Apte Path",
+          "green_phases": [6],
+          "edges": ["-290390083#1", "-1160332074#1"]
+        },
+        {
+          "approach_id": "BAHIRAT",
+          "label": "Baburao Baloba Bahirat Path",
+          "green_phases": [4],
+          "edges": ["-68573854#3", "-68573854#1"]
+        }
+      ],
+      "downstream_edges": ["238836092#0", "817900771#0"]
+    }
+  ]
+}

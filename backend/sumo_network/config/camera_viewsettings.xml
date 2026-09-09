@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<viewsettings>
+    <!-- Dedicated dashboard-style view of the verified Sancheti signal. -->
+    <!-- Close 16:9 presentation framing; rotation aligns the main approach vertically. -->
+    <viewport zoom="4600" x="1149.57" y="1522.28" angle="42"/>
+    <delay value="100"/>
+
+    <scheme name="PRAVAHA Camera">
+        <opengl antialiase="1" dither="0"/>
+        <background backgroundColor="24,108,45" showGrid="0" gridXSize="100" gridYSize="100"/>
+
+        <edges laneEdgeMode="0" scaleMode="0" laneShowBorders="1"
+               showBikeMarkings="0" showLinkDecals="1" showLinkRules="0"
+               showRails="0" secondaryShape="0" hideConnectors="1"
+               widthExaggeration="1.12" minSize="1" showDirection="0"
+               showSublanes="0" spreadSuperposed="0" disableHideByZoom="0"
+               edgeName_show="0" internalEdgeName_show="0" streetName_show="0">
+            <colorScheme name="uniform">
+                <entry color="13,18,22" name="road"/>
+                <entry color="72,78,82" name="sidewalk"/>
+                <entry color="40,44,48" name="bike lane"/>
+                <entry color="0,0,0,0" name="green verge"/>
+                <entry color="35,90,125" name="waterway"/>
+                <entry color="42,46,50" name="no passenger"/>
+                <entry color="190,45,45" name="closed"/>
+                <entry color="13,18,22" name="connector"/>
+            </colorScheme>
+        </edges>
+
+        <!-- Mode 10 colours vehicles using their current waiting time. -->
+        <vehicles vehicleMode="10" vehicleQuality="2"
+                  vehicle_minSize="1.0" vehicle_exaggeration="1.05"
+                  vehicle_constantSize="0" showBlinker="1"
+                  vehicleName_show="0">
+            <colorScheme name="by waiting time" interpolated="1">
+                <entry color="45,220,70" threshold="0" name="moving"/>
+                <entry color="245,220,35" threshold="8" name="slowing"/>
+                <entry color="255,128,25" threshold="20" name="queued"/>
+                <entry color="245,45,45" threshold="35" name="congested"/>
+            </colorScheme>
+        </vehicles>
+
+        <junctions junctionMode="0" drawShape="1"
+                   drawCrossingsAndWalkingareas="1" showLane2Lane="0"
+                   junction_minSize="1" junction_exaggeration="1"
+                   junction_constantSize="0" junctionName_show="0">
+            <colorScheme name="uniform">
+                <entry color="13,18,22"/>
+                <entry color="35,90,125" name="waterway"/>
+            </colorScheme>
+        </junctions>
+
+        <additionals addMode="0" add_minSize="1" add_exaggeration="1"
+                     add_constantSize="0" addName_show="0"/>
+        <pois poi_minSize="0" poi_exaggeration="1" poi_constantSize="0"
+              poiName_show="0" poiType_show="0"/>
+        <polys poly_minSize="0" poly_exaggeration="1" poly_constantSize="0"
+               polyName_show="0" polyType_show="0"/>
+        <legend showSizeLegend="0"/>
+    </scheme>
+</viewsettings>

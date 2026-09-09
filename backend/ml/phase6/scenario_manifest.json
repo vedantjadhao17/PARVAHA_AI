@@ -1,0 +1,333 @@
+{
+  "scenarios": [
+    {
+      "scenario_id": "TRAIN_normal_41356",
+      "category": "normal",
+      "split": "TRAIN",
+      "seed": 41356,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.0,
+      "incident": false
+    },
+    {
+      "scenario_id": "VAL_normal_56667",
+      "category": "normal",
+      "split": "VAL",
+      "seed": 56667,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.0,
+      "incident": false
+    },
+    {
+      "scenario_id": "TEST_normal_82452",
+      "category": "normal",
+      "split": "TEST",
+      "seed": 82452,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.0,
+      "incident": false
+    },
+    {
+      "scenario_id": "TRAIN_low_56288",
+      "category": "low",
+      "split": "TRAIN",
+      "seed": 56288,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.0,
+      "incident": false
+    },
+    {
+      "scenario_id": "VAL_low_37993",
+      "category": "low",
+      "split": "VAL",
+      "seed": 37993,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.0,
+      "incident": false
+    },
+    {
+      "scenario_id": "TEST_low_10925",
+      "category": "low",
+      "split": "TEST",
+      "seed": 10925,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.0,
+      "incident": false
+    },
+    {
+      "scenario_id": "TRAIN_high_77287",
+      "category": "high",
+      "split": "TRAIN",
+      "seed": 77287,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.0,
+      "incident": false
+    },
+    {
+      "scenario_id": "VAL_high_42056",
+      "category": "high",
+      "split": "VAL",
+      "seed": 42056,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.0,
+      "incident": false
+    },
+    {
+      "scenario_id": "TEST_high_12502",
+      "category": "high",
+      "split": "TEST",
+      "seed": 12502,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.0,
+      "incident": false
+    },
+    {
+      "scenario_id": "TRAIN_extreme_90638",
+      "category": "extreme",
+      "split": "TRAIN",
+      "seed": 90638,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.0,
+      "incident": false
+    },
+    {
+      "scenario_id": "VAL_extreme_33971",
+      "category": "extreme",
+      "split": "VAL",
+      "seed": 33971,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.0,
+      "incident": false
+    },
+    {
+      "scenario_id": "TEST_extreme_55400",
+      "category": "extreme",
+      "split": "TEST",
+      "seed": 55400,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.0,
+      "incident": false
+    },
+    {
+      "scenario_id": "TRAIN_incident_60585",
+      "category": "incident",
+      "split": "TRAIN",
+      "seed": 60585,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.0,
+      "incident": true
+    },
+    {
+      "scenario_id": "VAL_incident_66041",
+      "category": "incident",
+      "split": "VAL",
+      "seed": 66041,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.0,
+      "incident": true
+    },
+    {
+      "scenario_id": "TEST_incident_28431",
+      "category": "incident",
+      "split": "TEST",
+      "seed": 28431,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.0,
+      "incident": true
+    },
+    {
+      "scenario_id": "TRAIN_heavy_vehicle_92514",
+      "category": "heavy_vehicle",
+      "split": "TRAIN",
+      "seed": 92514,
+      "heavy_requested": 0.3,
+      "moto_requested": 0.0,
+      "incident": false
+    },
+    {
+      "scenario_id": "VAL_heavy_vehicle_17995",
+      "category": "heavy_vehicle",
+      "split": "VAL",
+      "seed": 17995,
+      "heavy_requested": 0.3,
+      "moto_requested": 0.0,
+      "incident": false
+    },
+    {
+      "scenario_id": "TEST_heavy_vehicle_87238",
+      "category": "heavy_vehicle",
+      "split": "TEST",
+      "seed": 87238,
+      "heavy_requested": 0.3,
+      "moto_requested": 0.0,
+      "incident": false
+    },
+    {
+      "scenario_id": "TRAIN_motorcycle_58568",
+      "category": "motorcycle",
+      "split": "TRAIN",
+      "seed": 58568,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.5,
+      "incident": false
+    },
+    {
+      "scenario_id": "VAL_motorcycle_33012",
+      "category": "motorcycle",
+      "split": "VAL",
+      "seed": 33012,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.5,
+      "incident": false
+    },
+    {
+      "scenario_id": "TEST_motorcycle_50334",
+      "category": "motorcycle",
+      "split": "TEST",
+      "seed": 50334,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.5,
+      "incident": false
+    },
+    {
+      "scenario_id": "TRAIN_combined_high_incident_51255",
+      "category": "combined_high_incident",
+      "split": "TRAIN",
+      "seed": 51255,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.0,
+      "incident": true
+    },
+    {
+      "scenario_id": "VAL_combined_high_incident_72137",
+      "category": "combined_high_incident",
+      "split": "VAL",
+      "seed": 72137,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.0,
+      "incident": true
+    },
+    {
+      "scenario_id": "TEST_combined_high_incident_78709",
+      "category": "combined_high_incident",
+      "split": "TEST",
+      "seed": 78709,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.0,
+      "incident": true
+    },
+    {
+      "scenario_id": "TRAIN_combined_high_heavy_66931",
+      "category": "combined_high_heavy",
+      "split": "TRAIN",
+      "seed": 66931,
+      "heavy_requested": 0.3,
+      "moto_requested": 0.0,
+      "incident": false
+    },
+    {
+      "scenario_id": "VAL_combined_high_heavy_70900",
+      "category": "combined_high_heavy",
+      "split": "VAL",
+      "seed": 70900,
+      "heavy_requested": 0.3,
+      "moto_requested": 0.0,
+      "incident": false
+    },
+    {
+      "scenario_id": "TEST_combined_high_heavy_95114",
+      "category": "combined_high_heavy",
+      "split": "TEST",
+      "seed": 95114,
+      "heavy_requested": 0.3,
+      "moto_requested": 0.0,
+      "incident": false
+    },
+    {
+      "scenario_id": "TRAIN_combined_high_moto_40789",
+      "category": "combined_high_moto",
+      "split": "TRAIN",
+      "seed": 40789,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.5,
+      "incident": false
+    },
+    {
+      "scenario_id": "VAL_combined_high_moto_37022",
+      "category": "combined_high_moto",
+      "split": "VAL",
+      "seed": 37022,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.5,
+      "incident": false
+    },
+    {
+      "scenario_id": "TEST_combined_high_moto_92913",
+      "category": "combined_high_moto",
+      "split": "TEST",
+      "seed": 92913,
+      "heavy_requested": 0.0,
+      "moto_requested": 0.5,
+      "incident": false
+    },
+    {
+      "scenario_id": "TRAIN_combined_incident_heavy_87581",
+      "category": "combined_incident_heavy",
+      "split": "TRAIN",
+      "seed": 87581,
+      "heavy_requested": 0.3,
+      "moto_requested": 0.0,
+      "incident": true
+    },
+    {
+      "scenario_id": "VAL_combined_incident_heavy_69424",
+      "category": "combined_incident_heavy",
+      "split": "VAL",
+      "seed": 69424,
+      "heavy_requested": 0.3,
+      "moto_requested": 0.0,
+      "incident": true
+    },
+    {
+      "scenario_id": "TEST_combined_incident_heavy_29105",
+      "category": "combined_incident_heavy",
+      "split": "TEST",
+      "seed": 29105,
+      "heavy_requested": 0.3,
+      "moto_requested": 0.0,
+      "incident": true
+    },
+    {
+      "scenario_id": "TRAIN_combined_extreme_hetero_27550",
+      "category": "combined_extreme_hetero",
+      "split": "TRAIN",
+      "seed": 27550,
+      "heavy_requested": 0.2,
+      "moto_requested": 0.3,
+      "incident": true
+    },
+    {
+      "scenario_id": "VAL_combined_extreme_hetero_35325",
+      "category": "combined_extreme_hetero",
+      "split": "VAL",
+      "seed": 35325,
+      "heavy_requested": 0.2,
+      "moto_requested": 0.3,
+      "incident": true
+    },
+    {
+      "scenario_id": "TEST_combined_extreme_hetero_14413",
+      "category": "combined_extreme_hetero",
+      "split": "TEST",
+      "seed": 14413,
+      "heavy_requested": 0.2,
+      "moto_requested": 0.3,
+      "incident": true
+    }
+  ],
+  "stats": {
+    "generated": 36,
+    "validated": 36,
+    "rejected": 0
+  }
+}
