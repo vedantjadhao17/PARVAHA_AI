@@ -190,7 +190,7 @@ export const LeafletLiveMap = ({ selectedJunction, onJunctionSelect, junctionOrd
   }
 
   return (
-    <div className="relative w-full h-full rounded overflow-hidden">
+    <div className="relative isolate w-full h-full rounded overflow-hidden">
       {/* Simulation time badge */}
       {state?.time_s !== undefined && (
         <div className="absolute top-3 right-3 z-[500] bg-navy-900/90 border border-navy-border text-xs text-gray-300 px-2 py-1 rounded font-mono">

@@ -458,7 +458,7 @@ export const CommandMap = () => {
   // ─── Render ──────────────────────────────────────────────────────────────
 
   return (
-    <div className="flex h-full w-full relative">
+    <div className="relative isolate flex h-full w-full">
 
       {/* Realtime recommendation overlay */}
       {wsPendingRecommendations.length > 0 && (

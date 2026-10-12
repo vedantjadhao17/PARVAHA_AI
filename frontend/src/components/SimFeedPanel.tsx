@@ -134,7 +134,7 @@ export const SimFeedPanel = ({
   return (
     <div className="space-y-3">
       {/* Map feed */}
-      <div className="relative rounded overflow-hidden border border-navy-border shadow-lg flex flex-col" style={{ height: 360 }}>
+      <div className="relative isolate rounded overflow-hidden border border-navy-border shadow-lg flex flex-col" style={{ height: 360 }}>
         {/* Header overlay */}
         <div className="absolute top-0 left-0 right-0 z-[500] flex justify-between items-center px-3 py-2 bg-navy-900/90 backdrop-blur-sm border-b border-navy-border">
           <span className="text-[10px] font-mono text-gray-300 uppercase tracking-widest">
