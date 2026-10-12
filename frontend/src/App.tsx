@@ -110,6 +110,9 @@ function App() {
                 <Route path="/operator-log" element={<OperatorLog />} />
               </Routes>
             </main>
+            <footer className="shrink-0 px-4 py-1 text-[10px] text-gray-400 border-t border-navy-border">
+              Map data and tiles © <a className="underline" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a> · Simulation prototype
+            </footer>
           </div>
         </div>
       </Router>
