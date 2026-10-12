@@ -22,13 +22,6 @@ import { RecommendationPanel } from '../components/RecommendationPanel';
 
 // ─── Color & status helpers ──────────────────────────────────────────────────
 
-const getCongestionColor = (queue: number) => {
-  if (queue < 20) return '#10b981';
-  if (queue < 50) return '#facc15';
-  if (queue < 100) return '#f97316';
-  return '#ef4444';
-};
-
 const speedToColor = (speedMps: number) => {
   const kmh = speedMps * 3.6;
   if (kmh > 20) return '#10b981';
@@ -44,8 +37,9 @@ const getStatusBadge = (queue: number) => {
   return { label: 'Normal', cls: 'bg-status-green text-green-100' };
 };
 
-const deriveMetrics = (_queueM: number, vehicles: number) => {
-  const occupancy = Math.min(100, (vehicles / 50) * 100);
+const deriveMetrics = (queueM: number, vehicles: number) => {
+  // The simulator estimates queue as halted vehicles × 5 m; this is not lane occupancy.
+  const occupancy = vehicles > 0 ? Math.min(100, ((queueM / 5) / vehicles) * 100) : 0;
   return { occupancy: occupancy.toFixed(1) };
 };
 
@@ -134,14 +128,14 @@ const LiveJunctionThumb = ({
   const [lanes, setLanes] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/junction/camera/${junctionId}`)
+    fetch(`/api/junction/camera/${junctionId}`)
       .then((r) => r.json())
       .then(setCamera)
       .catch(() => {});
   }, [junctionId]);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/network/geometry')
+    fetch('/api/network/geometry')
       .then((r) => r.json())
       .then((data) => setLanes(data.lanes ?? []))
       .catch(() => {});
@@ -284,15 +278,6 @@ export const CommandMap = () => {
   const wsPendingRecommendations =
     state?.pending_recommendations ?? [];
 
-  // Temporary runtime diagnostic.
-  // This confirms whether the browser is receiving pending recommendations.
-  useEffect(() => {
-    console.log(
-      '[PRAVAHA] pending recommendations:',
-      wsPendingRecommendations
-    );
-  }, [wsPendingRecommendations]);
-
   const [selectedJunction, setSelectedJunction] =
     useState<string | null>(null);
 
@@ -313,7 +298,7 @@ export const CommandMap = () => {
   // ─── Fetch junction topology ──────────────────────────────────────────────
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/junctions/config')
+    fetch('/api/junctions/config')
       .then((r) => r.json())
       .then(setJunctionConfig)
       .catch(() => {});
@@ -323,7 +308,7 @@ export const CommandMap = () => {
 
   useEffect(() => {
     const fetchAlerts = () => {
-      fetch('http://localhost:8000/api/alerts')
+      fetch('/api/alerts')
         .then((r) => r.json())
         .then(setDbAlerts)
         .catch(() => {});
@@ -379,15 +364,10 @@ export const CommandMap = () => {
     const jList =
       Object.values(liveJunctions) as any[];
 
-    const totalQueue = jList.reduce(
-      (s, j) => s + (j.queue_m || 0),
-      0
-    );
-
     const activeJunctions = jList.filter(
       (j) =>
         j._junction_avg_speed_kmh != null &&
-        j._junction_avg_speed_kmh > 0
+        j.active_vehicles > 0
     );
 
     const avgSpeed =
@@ -399,10 +379,7 @@ export const CommandMap = () => {
           ) / activeJunctions.length
         : 0;
 
-    const riskPct = Math.min(
-      100,
-      (totalQueue / 200) * 100
-    );
+    const riskPct = Math.max(0, ...jList.map(j => (j.predicted_capacity_ratio || 0) * 100));
 
     const avgOccupancy =
       jList.length > 0
@@ -517,7 +494,7 @@ export const CommandMap = () => {
           />
 
           <StatCard
-            label="Predicted Risk"
+            label="Max Forecast / Capacity"
             value={stats.riskPct}
             unit="%"
             icon={TrendingUp}
@@ -597,7 +574,7 @@ export const CommandMap = () => {
                 </div>
 
                 <div className="text-xs text-gray-500">
-                  {stats.avgOccupancy}% occ
+                  {stats.avgOccupancy}% halted
                 </div>
 
               </div>
@@ -633,7 +610,7 @@ export const CommandMap = () => {
 
             const speed =
               d._junction_avg_speed_kmh != null &&
-              d._junction_avg_speed_kmh > 0
+              d.active_vehicles > 0
                 ? d._junction_avg_speed_kmh.toFixed(1)
                 : 'N/A';
 
@@ -690,7 +667,7 @@ export const CommandMap = () => {
 
                     <div className="text-[10px] text-gray-400">
                       {occupancy !== 'N/A'
-                        ? `${occupancy}% occ`
+                        ? `${occupancy}% halted`
                         : 'N/A occ'}
                     </div>
 
@@ -846,7 +823,7 @@ export const CommandMap = () => {
 
                         <div className="text-lg font-bold text-white">
                           {selectedData?._junction_avg_speed_kmh != null &&
-                          selectedData._junction_avg_speed_kmh > 0
+                          selectedData.active_vehicles > 0
                             ? `${selectedData._junction_avg_speed_kmh.toFixed(1)} km/h`
                             : 'N/A'}
                         </div>
@@ -856,7 +833,7 @@ export const CommandMap = () => {
                       <div className="bg-navy-900 p-3 rounded border border-navy-border">
 
                         <div className="text-xs text-gray-400 mb-1">
-                          Occupancy
+                          Halted share
                         </div>
 
                         <div className="text-lg font-bold text-white">
@@ -927,7 +904,7 @@ export const CommandMap = () => {
                     }
                     speed={
                       selectedData?._junction_avg_speed_kmh != null &&
-                      selectedData._junction_avg_speed_kmh > 0
+                      selectedData.active_vehicles > 0
                         ? selectedData._junction_avg_speed_kmh.toFixed(1)
                         : 'N/A'
                     }
@@ -1003,11 +980,8 @@ export const CommandMap = () => {
                     </button>
 
                     <button
-                      onClick={() =>
-                        alert(
-                          'Create Incident endpoint not yet implemented in backend.'
-                        )
-                      }
+                      disabled
+                      title="Incident editing is not part of this prototype"
                       className="flex flex-col items-center justify-center space-y-1.5 p-3 bg-navy-900 hover:bg-navy-700 border border-cyan-600/50 hover:border-cyan-500 rounded-xl text-cyan-400 transition-colors shadow-lg"
                     >
                       <Flag size={20} />
@@ -1034,7 +1008,7 @@ export const CommandMap = () => {
                   />
 
                   <p className="text-sm">
-                    History tracking starts on approval.
+                    Per-junction history is not available yet. Use Analytics for current-run trends.
                   </p>
 
                   <p className="text-xs text-gray-600 mt-1">
@@ -1157,13 +1131,7 @@ export const CommandMap = () => {
 
                       <div className="flex space-x-2">
 
-                        <button className="flex-1 bg-status-green hover:bg-green-600 text-white font-bold py-2 rounded text-sm transition-colors shadow">
-                          Review Plan
-                        </button>
-
-                        <button className="flex-1 bg-navy-700 hover:bg-navy-600 text-white font-medium py-2 rounded text-sm transition-colors border border-navy-border">
-                          Dismiss
-                        </button>
+                        <p className="text-xs text-gray-400">Signal proposals appear after a safe improvement is found.</p>
 
                       </div>
 

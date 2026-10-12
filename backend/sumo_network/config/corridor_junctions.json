@@ -2,7 +2,7 @@
   "corridor_id": "pravaha_shivajinagar_three_signal_corridor",
   "status": "simulation prototype; not field calibrated",
   "sample_period_s": 5,
-  "prediction_horizon_s": 90,
+  "prediction_horizon_s": 60,
   "junctions": [
     {
       "junction_id": "J1_SAN",

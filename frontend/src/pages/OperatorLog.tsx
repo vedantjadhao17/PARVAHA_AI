@@ -4,7 +4,7 @@ interface LogEntry {
   id: string;
   operator_id: string;
   action: string;
-  resource_id: number;
+  resource_id: string;
   location: string;
   reason: string;
   outcome: string;
@@ -15,16 +15,21 @@ interface LogEntry {
 export const OperatorLog = () => {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/operator-log')
-      .then(res => res.json())
+    fetch('/api/operator-log')
+      .then(res => {
+        if (!res.ok) throw new Error('Audit log unavailable');
+        return res.json();
+      })
       .then(data => {
         if (Array.isArray(data)) setLogs(data); else setLogs([]);
         setLoading(false);
       })
       .catch(err => {
         console.error(err);
+        setError(true);
         setLoading(false);
       });
   }, []);
@@ -37,12 +42,14 @@ export const OperatorLog = () => {
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
           </svg>
-          Immutable Ledger
+          Application Audit Log
         </span>
       </div>
 
       {loading ? (
         <div className="text-gray-400">Loading audit logs...</div>
+      ) : error ? (
+        <p role="alert" className="text-amber-400">Unable to load the audit log. Please try again when the backend is connected.</p>
       ) : logs.length === 0 ? (
         <div className="bg-navy-800 p-8 rounded border border-navy-border text-center text-gray-400">
           No operator actions recorded yet.

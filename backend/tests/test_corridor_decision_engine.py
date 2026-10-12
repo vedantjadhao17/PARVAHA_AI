@@ -8,6 +8,7 @@ from app.models.recommendation_store import store
 
 @pytest.fixture
 def engine():
+    store._records.clear()
     return CorridorDecisionEngine("dummy.sumocfg")
 
 @pytest.fixture
@@ -39,7 +40,8 @@ def dummy_corridor_state():
         timestamp=100.0
     )
 
-def test_no_improvement_results_in_noop_corridor(engine, dummy_corridor_state):
+@pytest.mark.parametrize("candidate_queue", [110, 100, 96, float("nan"), float("inf")])
+def test_no_improvement_results_in_noop_corridor(engine, dummy_corridor_state, candidate_queue):
     fixed_cands = engine.generator.generate_corridor_candidates(dummy_corridor_state)
     with patch.object(engine.generator, "generate_corridor_candidates", return_value=fixed_cands), patch.object(engine.evaluator, "evaluate_candidates") as mock_eval, patch("app.sim.corridor_decision_engine.check_corridor_candidate") as mock_check, patch("os.path.exists", return_value=True):
         mock_check.return_value = SafetyCheckResult(passed=True, violations=[])
@@ -55,12 +57,12 @@ def test_no_improvement_results_in_noop_corridor(engine, dummy_corridor_state):
                 evaluation_horizon_s=60,
                 score=100,
                 safety=safety,
-                notes="HOLD"
+                notes="HOLD baseline"
             ),
             CorridorCandidateEvaluation(
                 candidate_id=fixed_cands[1].candidate_id,
                 junction_evaluations={},
-                avg_queue_m=110,
+                avg_queue_m=candidate_queue,
                 max_queue_m=160,
                 avg_speed_kmh=9,
                 total_halting_vehicles=25,

@@ -1,5 +1,6 @@
 import logging
 import os
+import math
 from typing import List, Optional
 from datetime import datetime, timezone
 
@@ -61,7 +62,7 @@ class CorridorDecisionEngine:
             return
 
         best_eval = baseline_eval
-        best_imp = -100.0
+        best_imp = 0.0
 
         # Downstream degradation tolerance (configurable, e.g. 15.0 meters)
         # If any junction's queue increases by more than 15.0 meters compared to HOLD, reject.
@@ -70,6 +71,10 @@ class CorridorDecisionEngine:
 
         for ev in evaluations:
             if ev.candidate_id == baseline_eval.candidate_id:
+                continue
+            if ev.safety is not None and not ev.safety.passed:
+                continue
+            if not math.isfinite(ev.avg_queue_m) or not math.isfinite(baseline_eval.avg_queue_m):
                 continue
                 
             # Upstream/Downstream check
@@ -87,12 +92,11 @@ class CorridorDecisionEngine:
                 continue
                 
             imp = ((baseline_eval.avg_queue_m - ev.avg_queue_m) / max(baseline_eval.avg_queue_m, 1)) * 100
-            if imp > -100.0 and imp > best_imp:
+            if imp >= self.improvement_threshold_pct and imp > best_imp:
                 best_imp = imp
                 best_eval = ev
 
         if best_eval.candidate_id == baseline_eval.candidate_id:
-            print("EARLY RETURN: NO BEST", file=open("debug.log","a"))
             logger.info("[PHASE4] No candidate exceeded improvement threshold. Returning NO_SAFE_CHANGE.")
             return
             
@@ -126,7 +130,7 @@ class CorridorDecisionEngine:
             source_states=[],  # Populated below
             proposal=proposal,
             evaluations=list(best_eval.junction_evaluations.values()) + list(baseline_eval.junction_evaluations.values()),
-            rollback_candidates=[c for c in safe_candidates[0].junction_candidates.values()],  # HOLD baseline
+            rollback_candidates=list(next(c for c in safe_candidates if c.candidate_id == baseline_eval.candidate_id).junction_candidates.values()),
             safety=check_corridor_candidate(winner_cand),
             selected_candidate_id=winner_cand.candidate_id,
             operator_rationale=rationale,
@@ -157,7 +161,7 @@ class CorridorDecisionEngine:
             logger.info(f"[PHASE4] Stored Corridor Recommendation {req.recommendation_id}")
             
             # Create Alert in DB for the UI
-            computed_expected_in_s = 300
+            computed_expected_in_s = 60
             if state.critical_junction_id and state.critical_junction_id in state.junctions:
                 critical_j = state.junctions[state.critical_junction_id]
                 cap = critical_j.capacity_m
@@ -171,7 +175,7 @@ class CorridorDecisionEngine:
                     computed_expected_in_s = 0
                 elif pred_q > current_q and pred_q >= threshold:
                     ratio = (threshold - current_q) / (pred_q - current_q)
-                    computed_expected_in_s = int(300.0 * ratio)
+                    computed_expected_in_s = int(60.0 * ratio)
 
             db = SessionLocal()
             try:

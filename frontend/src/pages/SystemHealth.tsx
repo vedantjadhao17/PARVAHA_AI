@@ -1,79 +1,42 @@
 import { useEffect, useState } from 'react';
+import { useWebSocket } from '../context/WebSocketContext';
 
+interface Health {
+  simulation_connected: boolean;
+  model_loaded: boolean;
+  uptime_s: number;
+  scenario: string;
+  telemetry_age_s: number | null;
+  error: string | null;
+  read_only: boolean;
+}
 export const SystemHealth = () => {
-  const [uptime, setUptime] = useState(0);
-
+  const [health, setHealth] = useState<Health | null>(null);
+  const { connected } = useWebSocket();
   useEffect(() => {
-    const timer = setInterval(() => setUptime(prev => prev + 1), 1000);
-    return () => clearInterval(timer);
+    let disposed = false;
+    const poll = () => fetch('/api/health').then(r => {
+      if (!r.ok) throw new Error('Health request failed');
+      return r.json();
+    }).then(data => { if (!disposed) setHealth(data); }).catch(() => { if (!disposed) setHealth(null); });
+    poll();
+    const timer = setInterval(poll, 3000);
+    return () => { disposed = true; clearInterval(timer); };
   }, []);
-
-  const formatUptime = (seconds: number) => {
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = seconds % 60;
-    return `${h}h ${m}m ${s}s`;
-  };
-
-  return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">System Health</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-navy-800 p-6 rounded border border-navy-border">
-          <div className="text-gray-400 text-sm mb-2">Simulation Engine</div>
-          <div className="text-2xl font-bold text-green-400 flex items-center gap-2">
-            <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-            ONLINE
-          </div>
-        </div>
-        
-        <div className="bg-navy-800 p-6 rounded border border-navy-border">
-          <div className="text-gray-400 text-sm mb-2">WebSocket Feed</div>
-          <div className="text-2xl font-bold text-green-400">1.0 Hz</div>
-        </div>
-
-        <div className="bg-navy-800 p-6 rounded border border-navy-border">
-          <div className="text-gray-400 text-sm mb-2">ML Inference</div>
-          <div className="text-2xl font-bold text-white">42ms avg</div>
-        </div>
-
-        <div className="bg-navy-800 p-6 rounded border border-navy-border">
-          <div className="text-gray-400 text-sm mb-2">Session Uptime</div>
-          <div className="text-2xl font-bold text-white font-mono">{formatUptime(uptime)}</div>
-        </div>
-      </div>
-
-      <div className="bg-navy-800 border border-navy-border rounded overflow-hidden">
-        <div className="bg-navy-900 px-6 py-4 border-b border-navy-border">
-          <h2 className="font-semibold text-white">Service Matrix</h2>
-        </div>
-        <div className="p-6">
-          <div className="space-y-4">
-            <div className="flex justify-between items-center p-3 hover:bg-navy-700/50 rounded">
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-gray-300">SUMO TraCI</span>
-              </div>
-              <span className="text-sm text-gray-500">Connected to 127.0.0.1</span>
-            </div>
-            <div className="flex justify-between items-center p-3 hover:bg-navy-700/50 rounded">
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-gray-300">XGBoost Forecast Service</span>
-              </div>
-              <span className="text-sm text-gray-500">Loaded queue_5m, queue_10m</span>
-            </div>
-            <div className="flex justify-between items-center p-3 hover:bg-navy-700/50 rounded">
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-gray-300">SQLite Log Database</span>
-              </div>
-              <span className="text-sm text-gray-500">Read/Write OK</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  const cards = [
+    ['SUMO simulation', health?.simulation_connected ? 'Connected' : 'Unavailable'],
+    ['Telemetry feed', connected ? 'Receiving updates' : 'Disconnected / stale'],
+    ['60-second forecast model', health?.model_loaded ? 'XGBoost loaded' : 'Unavailable'],
+    ['Backend uptime', health ? `${health.uptime_s}s` : 'Unavailable'],
+  ];
+  return <div className="p-6 space-y-6">
+    <h1 className="text-2xl font-bold">System Health</h1>
+    <p className="text-gray-400">Status reported by the backend and telemetry connection. All traffic is simulated.</p>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{cards.map(([label, value]) =>
+      <div key={label} className="p-6 rounded-xl bg-navy-800 border border-navy-border">
+        <p className="text-gray-400 text-sm">{label}</p><p className="text-xl mt-2">{value}</p>
+      </div>)}</div>
+    {health && <p className="text-gray-400">Scenario: {health.scenario} · {health.read_only ? 'Read-only showcase' : 'Local operator mode'}</p>}
+    {health?.error && <p role="alert" className="text-amber-400">{health.error}</p>}
+  </div>;
 };

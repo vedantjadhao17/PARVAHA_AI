@@ -90,20 +90,19 @@ export const SimFeedPanel = ({
   predictedQueueM,
   forecastRisk,
 }: Props) => {
-  const { state } = useWebSocket();
+  const { state, connected } = useWebSocket();
   const [camera, setCamera] = useState<CameraConfig | null>(null);
   const [lanes, setLanes] = useState<LaneShape[]>([]);
   const [cameraError, setCameraError] = useState(false);
 
   const vehicles: VehicleState[] = state?.vehicles ?? [];
   const sigColor = signalGlowColor(signalState || 'UNKNOWN');
-  console.log("SimFeedPanel render:", { predictedQueueM, queueM });
 
   // Fetch camera config whenever junction changes
   useEffect(() => {
     setCameraError(false);
     setCamera(null);
-    fetch(`http://localhost:8000/api/junction/camera/${junctionId}`)
+    fetch(`/api/junction/camera/${junctionId}`)
       .then((r) => r.json())
       .then(setCamera)
       .catch(() => setCameraError(true));
@@ -111,7 +110,7 @@ export const SimFeedPanel = ({
 
   // Fetch lane geometry once
   useEffect(() => {
-    fetch('http://localhost:8000/api/network/geometry')
+    fetch('/api/network/geometry')
       .then((r) => r.json())
       .then((data) => setLanes(data.lanes ?? []))
       .catch(() => {});
@@ -202,12 +201,12 @@ export const SimFeedPanel = ({
           {/* Camera ID footer */}
           <div className="absolute bottom-0 left-0 right-0 z-[500] flex justify-between items-end px-4 py-3 bg-gradient-to-t from-navy-900 to-transparent text-[10px] text-gray-400">
             <div>
-              <div className="font-mono text-gray-200 text-sm mb-0.5">CAM-{junctionId.split('_').pop()}-E01</div>
-              <div className="text-gray-400">{_junctionName} · Eastbound</div>
+              <div className="font-mono text-gray-200 text-sm mb-0.5">{junctionId}</div>
+              <div className="text-gray-400">{_junctionName} · Simulation view</div>
             </div>
             <div className="text-right flex flex-col items-end space-y-0.5">
-              <span>Updated 1s ago</span>
-              <span>1 FPS</span>
+              <span>{connected ? 'Receiving telemetry' : 'Disconnected / stale'}</span>
+              <span>Simulation time: {state?.time_s ?? 0}s</span>
             </div>
           </div>
         </div>
@@ -220,7 +219,7 @@ export const SimFeedPanel = ({
             <div className="text-[9px] text-gray-500">{haltingVehicles != null ? haltingVehicles : 'N/A'} halting veh</div>
           </div>
           <div className="p-3 text-center border-r border-navy-border/50">
-            <div className="text-[10px] text-status-amber mb-1 font-bold">FORECAST +5m</div>
+            <div className="text-[10px] text-status-amber mb-1 font-bold">FORECAST +60s</div>
             <div className="text-xl font-bold text-status-amber">{predictedQueueM != null ? `${predictedQueueM.toFixed(0)}m` : 'N/A'}</div>
             <div className="text-[9px] text-gray-500">Risk: {forecastRisk || 'LOW'}</div>
           </div>

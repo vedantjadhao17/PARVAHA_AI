@@ -1,0 +1,11 @@
+.git
+.venv
+**/node_modules
+**/dist
+**/__pycache__
+**/venv
+**/*.db
+backend/runtime
+backend/sumo_network/outputs
+**/*.log
+.env*

@@ -138,7 +138,7 @@ export const Junctions = () => {
         ? (junctions.reduce((sum, j) => sum + (j.queue_m ?? 0), 0) / total).toFixed(1)
         : '0.0';
     const severe = junctions.filter(
-      (j) => j.status === 'Severe' || j.queue_m != null && j.queue_m != null && j.queue_m >= 100
+      (j) => j.status === 'Severe' || j.queue_m != null && j.queue_m >= 100
     ).length;
     const activeAlerts = state?.active_alerts?.length || 0;
     return { total, avgQueue, severe, activeAlerts };

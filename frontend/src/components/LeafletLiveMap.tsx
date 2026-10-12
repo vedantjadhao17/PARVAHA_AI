@@ -117,7 +117,7 @@ export const LeafletLiveMap = ({ selectedJunction, onJunctionSelect, junctionOrd
 
   // Fetch road geometry once
   useEffect(() => {
-    fetch('http://localhost:8000/api/network/geometry')
+    fetch('/api/network/geometry')
       .then((r) => r.json())
       .then(setGeometry)
       .catch(() => setGeoError(true));

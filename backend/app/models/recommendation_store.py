@@ -19,6 +19,7 @@ prototype the store is small enough that sync access is acceptable.
 from __future__ import annotations
 
 import threading
+from datetime import datetime, timezone
 from typing import Dict, Optional
 
 from app.sim.signal_plan import ApprovalRequest
@@ -102,7 +103,18 @@ class RecommendationStore:
     def list_pending(self) -> list[ApprovalRequest]:
         """Return all recommendations in PENDING state."""
         with self._lock:
+            now = datetime.now(timezone.utc)
+            for key, rec in self._records.items():
+                if rec.status == "PENDING" and (now - rec.created_at).total_seconds() > 60:
+                    self._records[key] = rec.model_copy(update={"status": "EXPIRED"})
             return [r for r in self._records.values() if r.status == "PENDING"]
+
+    def end_simulation_run(self):
+        """Plans from a previous SUMO run must never be applied to the next run."""
+        with self._lock:
+            for key, rec in self._records.items():
+                if rec.status in {"PENDING", "APPROVED", "APPLIED"}:
+                    self._records[key] = rec.model_copy(update={"status": "EXPIRED"})
 
     def list_all(self) -> list[ApprovalRequest]:
         """Return all recommendations in any state."""
