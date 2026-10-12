@@ -1,3 +1,4 @@
+import { apiFetch as fetch } from '../replay';
 import { useEffect, useState, useMemo } from 'react';
 import { MapContainer, TileLayer, Polyline, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';

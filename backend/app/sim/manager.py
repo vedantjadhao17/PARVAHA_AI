@@ -6,7 +6,6 @@ import threading
 from pathlib import Path
 from typing import Dict, Any, List
 
-import xgboost as xgb
 import traci
 from app.sim.traci_lock import traci_lock
 
@@ -15,15 +14,9 @@ from app.sim.corridor_decision_engine import CorridorDecisionEngine
 from app.sim.corridor_state import CorridorState, CorridorJunctionState
 from app.sim.forecast import QueueForecaster
 from collections import deque
-import threading
 import tempfile
-import traci
+import os
 
-
-
-
-from app.db.database import SessionLocal, Alert, OperatorLog
-from app.sim.feature_extractor import LiveFeatureExtractor
 from app.sim.network_geometry import get_net
 
 logger = logging.getLogger(__name__)
@@ -33,20 +26,13 @@ class SimulationManager:
         self.project_dir = project_dir
 
         # Paths
-        self.sumocfg_path = Path("/Users/vedantjadhao/Documents/veda/asteria-command-center/backend/sumo_network/config/demo_2_rising.sumocfg")
-        self.static_meta_path = Path("/Users/vedantjadhao/Documents/veda/asteria-command-center/backend/sumo_network/config/corridor_static_meta.json")
-        self.signal_meta_path = Path("/Users/vedantjadhao/Documents/veda/asteria-command-center/backend/sumo_network/config/corridor_signal_meta.json")
-        self.junction_cfg_path = Path("/Users/vedantjadhao/Documents/veda/asteria-command-center/backend/sumo_network/config/corridor_junctions.json")
-        self.static_meta_path = Path("/Users/vedantjadhao/Documents/veda/asteria-command-center/backend/sumo_network/config/corridor_static_meta.json")
-        self.signal_meta_path = Path("/Users/vedantjadhao/Documents/veda/asteria-command-center/backend/sumo_network/config/corridor_signal_meta.json")
-        self.policy_cfg_path = self.project_dir / "config" / "corridor_policy.json"
-
-        # Load XGBoost models
-
-
-
-        self.forecast_model = xgb.Booster()
-        self.forecast_model.load_model(str(self.project_dir / "ml" / "models" / "queue_forecast_model.json"))
+        network_dir = self.project_dir / "sumo_network"
+        (network_dir / "outputs").mkdir(parents=True, exist_ok=True)
+        self.sumocfg_path = network_dir / "config" / os.getenv("PRAVAHA_SCENARIO", "demo_2_rising.sumocfg")
+        self.static_meta_path = network_dir / "config" / "corridor_static_meta.json"
+        self.signal_meta_path = network_dir / "config" / "corridor_signal_meta.json"
+        self.junction_cfg_path = network_dir / "config" / "corridor_junctions.json"
+        self.policy_cfg_path = network_dir / "config" / "corridor_policy.json"
 
         with open(self.junction_cfg_path, 'r') as f:
             self.config = json.load(f)
@@ -62,22 +48,13 @@ class SimulationManager:
         self.corridor_decision_running = False
         self.corridor_decision_lock = threading.Lock()
 
-
-
-
-
-
-        # Feature names - get exactly what XGBoost expects from the loaded model
-        self.feature_names = self.forecast_model.feature_names
-        if not self.feature_names:
-            self.feature_names = [f"f{i}" for i in range(42)]
-
-        self.feature_extractor = LiveFeatureExtractor(self.feature_names)
         self.pending_plan = None
-        self.lock = threading.Lock()
         self.lock = threading.Lock()
 
         self.is_running = False
+        self.last_update_monotonic = None
+        self.last_error = None
+        self.trend = deque(maxlen=120)
         self.state: Dict[str, Any] = {
             "time_s": 0.0,
             "junctions": {},
@@ -92,7 +69,7 @@ class SimulationManager:
         self.subscribers = set()
 
         # Cached sumolib net for coordinate conversion (shared with network_geometry)
-        self.net_path = Path("/Users/vedantjadhao/Documents/veda/asteria-command-center/backend/sumo_network/network/sancheti_core.net.xml")
+        self.net_path = network_dir / "network" / "sancheti_core.net.xml"
         self._net = get_net(str(self.net_path))
 
     def start(self, loop: asyncio.AbstractEventLoop):
@@ -109,6 +86,12 @@ class SimulationManager:
 
     def _start_sumo(self):
         """Starts or Restarts SUMO."""
+        from app.models.recommendation_store import store
+        store.end_simulation_run()
+        self.history_buffer.clear()
+        self.persistent_alerts.clear()
+        self.trend.clear()
+        self.last_decision_eval_s = 0.0
         try:
             with traci_lock:
                 traci.switch("default")
@@ -121,7 +104,13 @@ class SimulationManager:
 
     def _simulation_loop(self):
         """Dedicated thread running the blocking TraCI steps."""
-        self._start_sumo()
+        try:
+            self._start_sumo()
+        except Exception as exc:
+            self.last_error = str(exc)
+            self.is_running = False
+            logger.exception("SUMO could not start")
+            return
 
         while self.is_running:
             start_time = time.time()
@@ -129,15 +118,17 @@ class SimulationManager:
             try:
                 with traci_lock:
                     traci.switch("default")
-                    # Step SUMO by 1.0s (assuming 0.5s step length in sumocfg)
-                    traci.simulationStep()
-                    traci.simulationStep()
+                    traci.simulationStep(traci.simulation.getTime() + 1.0)
                     time_s = traci.simulation.getTime()
 
                     # Update state
                     self.state["time_s"] = time_s
                     self._update_junctions()
                     self._update_vehicles()
+                    self.last_update_monotonic = time.monotonic()
+                    if int(time_s) % 5 == 0 and self.state["junctions"]:
+                        junctions = list(self.state["junctions"].values())
+                        self.trend.append({"time": f"{int(time_s)}s", "queue": round(sum(j["queue_m"] for j in junctions) / len(junctions), 1), "speed": round(sum(j["_junction_avg_speed_kmh"] for j in junctions) / len(junctions), 1)})
 
                 # Check for approved plans to execute
                 with self.lock:
@@ -146,22 +137,23 @@ class SimulationManager:
                         if success:
                             self.pending_plan = None
 
-
-
                 # Push WS broadcast to the main asyncio loop
                 if self.loop and self.subscribers:
                     asyncio.run_coroutine_threadsafe(self._broadcast_state(), self.loop)
 
                 # Handle scenario end (600s). We assume if time_s goes past 600, or TraCI raises FatalTraCIError
-                if time_s >= 600:
+                if time_s >= 600 and not self.corridor_decision_running:
                     logger.info("Simulation reached 600s. Restarting scenario to maintain live feed.")
                     self._start_sumo()
 
             except traci.exceptions.FatalTraCIError:
                 # Simulation ended naturally, restart
+                if not self.is_running:
+                    break
                 logger.info("TraCI connection closed. Restarting scenario.")
                 self._start_sumo()
             except Exception as e:
+                self.last_error = str(e)
                 logger.error(f"Error in simulation loop: {e}")
 
             # Sleep to maintain 1Hz real-time cadence
@@ -197,7 +189,6 @@ class SimulationManager:
     def _update_junctions(self):
         try:
             new_junctions = {}
-            new_junctions = {}
             current_alerts = []
 
             for j in self.config.get("junctions", []):
@@ -218,6 +209,7 @@ class SimulationManager:
                 junction_speeds = []  # raw m/s speeds on this junction's lanes (for model feature)
 
                 halting_vehicles = 0
+                junction_avg_speed_kmh = 0.0
                 raw_state = ""
                 current_phase = 0
                 next_switch = 0.0
@@ -238,11 +230,11 @@ class SimulationManager:
                                 for vid in traci.lane.getLastStepVehicleIDs(lane):
                                     junction_speeds.append(traci.vehicle.getSpeed(vid))
                             except Exception:
-                                pass
+                                raise
                         junction_avg_speed_kmh = (sum(junction_speeds) / len(junction_speeds) * 3.6
                                           if junction_speeds else 0.0)
                     except Exception as e:
-                        pass
+                        raise
 
                 q_m = junction_q_m
                 v_c = junction_v_c
@@ -262,10 +254,6 @@ class SimulationManager:
 
                 for (q, t) in reversed(self.history_buffer[jid]):
                     dt = cur_time - t
-                    if 4.5 <= dt <= 5.5:  q_5  = q
-                    elif 9.5 <= dt <= 10.5: q_10 = q
-                    elif 14.5 <= dt <= 15.5: q_15 = q
-                    elif 19.5 <= dt <= 20.5: q_20 = q
                     if 4.5 <= dt <= 5.5:  q_5  = q
                     if 9.5 <= dt <= 10.5: q_10 = q
                     if 14.5 <= dt <= 15.5: q_15 = q
@@ -298,6 +286,7 @@ class SimulationManager:
 
 
                 new_junctions[jid] = {
+                    "id": jid,
                     "name": j["label"],
                     "queue_m": round(q_m, 1),
                     "halting_vehicles": halting_vehicles,
@@ -309,14 +298,13 @@ class SimulationManager:
                     "_junction_avg_speed_kmh": round(junction_avg_speed_kmh, 2),
                     "tls_id": tls_id,
                     "raw_state": raw_state,
+                    "signal_state": "YELLOW" if "y" in raw_state.lower() else ("GREEN" if "g" in raw_state.lower() else ("RED" if raw_state else "UNKNOWN")),
                     "current_phase": current_phase,
                     "next_switch": next_switch,
                     "remaining_time": max(0, next_switch - cur_time) if next_switch > cur_time else 0
                 }
 
                 # --- Phase 2.2 Decision Engine Trigger ---
-
-
 
                 # --- Spillback Evaluation (unchanged) ---
                 alert = self.spillback_engine.evaluate(jid, j["label"], round(q_m, 1))
@@ -426,6 +414,7 @@ class SimulationManager:
                                         self.corridor_decision_running = False
         except Exception as e:
             logger.error(f"Failed to update junctions: {e}", exc_info=True)
+            raise
 
     def apply_plan(self, plan):
         with self.lock:
@@ -461,8 +450,6 @@ class SimulationManager:
                 logger.error(f"Failed to apply signal change to {action.junction_id}: {e}")
         return True # Success
 
-
-
     async def _broadcast_state(self):
         """Send current state to all connected websocket clients."""
         from app.models.recommendation_store import store
@@ -477,7 +464,7 @@ class SimulationManager:
 
 
         disconnected = set()
-        for ws in self.subscribers:
+        for ws in tuple(self.subscribers):
             try:
                 await ws.send_text(message)
             except Exception as e:
@@ -485,24 +472,15 @@ class SimulationManager:
                 disconnected.add(ws)
 
         for ws in disconnected:
-            self.subscribers.remove(ws)
+            self.subscribers.discard(ws)
 
     def stop(self):
-
-        # Feature names - get exactly what XGBoost expects from the loaded model
-        self.feature_names = self.forecast_model.feature_names
-        if not self.feature_names:
-            self.feature_names = [f"f{i}" for i in range(42)]
-
-        self.feature_extractor = LiveFeatureExtractor(self.feature_names)
-        self.pending_plan = None
-        self.lock = threading.Lock()
-        self.lock = threading.Lock()
-
         self.is_running = False
         if self.sim_thread:
             self.sim_thread.join(timeout=2.0)
         try:
-            traci.close()
+            with traci_lock:
+                traci.switch("default")
+                traci.close()
         except:
             pass

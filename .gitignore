@@ -1,4 +1,6 @@
 # Python
+.venv/
+backend/runtime/
 __pycache__/
 *.py[cod]
 *$py.class
@@ -8,6 +10,7 @@ env/
 build/
 develop-eggs/
 dist/
+dist-replay/
 downloads/
 eggs/
 .eggs/

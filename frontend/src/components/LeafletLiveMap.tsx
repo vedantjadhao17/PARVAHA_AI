@@ -1,3 +1,4 @@
+import { apiFetch as fetch } from '../replay';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   MapContainer,
@@ -117,7 +118,7 @@ export const LeafletLiveMap = ({ selectedJunction, onJunctionSelect, junctionOrd
 
   // Fetch road geometry once
   useEffect(() => {
-    fetch('http://localhost:8000/api/network/geometry')
+    fetch('/api/network/geometry')
       .then((r) => r.json())
       .then(setGeometry)
       .catch(() => setGeoError(true));
@@ -190,7 +191,7 @@ export const LeafletLiveMap = ({ selectedJunction, onJunctionSelect, junctionOrd
   }
 
   return (
-    <div className="relative w-full h-full rounded overflow-hidden">
+    <div className="relative isolate w-full h-full rounded overflow-hidden">
       {/* Simulation time badge */}
       {state?.time_s !== undefined && (
         <div className="absolute top-3 right-3 z-[500] bg-navy-900/90 border border-navy-border text-xs text-gray-300 px-2 py-1 rounded font-mono">

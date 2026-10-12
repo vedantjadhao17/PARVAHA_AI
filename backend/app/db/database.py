@@ -3,8 +3,12 @@ from sqlalchemy import create_engine, Column, String, Integer, Float, DateTime, 
 from sqlalchemy.orm import declarative_base, sessionmaker
 from datetime import datetime
 import hashlib
+import os
+from pathlib import Path
 
-DATABASE_URL = "sqlite:///./asteria.db"
+runtime_dir = Path(__file__).resolve().parents[2] / "runtime"
+runtime_dir.mkdir(exist_ok=True)
+DATABASE_URL = os.getenv("PRAVAHA_DATABASE_URL", f"sqlite:///{runtime_dir / 'pravaha.db'}")
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

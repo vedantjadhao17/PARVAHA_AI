@@ -1,4 +1,6 @@
+import { apiFetch as fetch } from '../replay';
 import React, { useState } from 'react';
+import { useWebSocket } from '../context/WebSocketContext';
 import { AlertTriangle, Check, X, ShieldAlert, Zap, GitCommit } from 'lucide-react';
 
 export const RecommendationPanel = ({
@@ -10,6 +12,7 @@ export const RecommendationPanel = ({
 }) => {
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { readOnly, connected } = useWebSocket();
 
   if (!recommendations || recommendations.length === 0) return null;
 
@@ -20,7 +23,7 @@ export const RecommendationPanel = ({
     setLoading(action);
     setError(null);
     
-    const url = `http://localhost:8000/api/recommendations/${rec.recommendation_id}/${action}`;
+    const url = `/api/recommendations/${rec.recommendation_id}/${action}`;
     console.log(`[PRAVAHA ACTION] method=POST url=${url} recommendationId=${rec.recommendation_id}`);
     
     try {
@@ -51,9 +54,10 @@ export const RecommendationPanel = ({
   };
 
   return (
-    <div className="absolute right-4 top-4 w-[450px] bg-slate-900 border-2 border-slate-700 shadow-2xl rounded-xl text-sm flex flex-col z-50 overflow-hidden" style={{ maxHeight: 'calc(100% - 2rem)' }}>
+    // Above fullscreen maps (1000); isolation keeps this layer inside the dashboard.
+    <section aria-label="AI recommendation" className="absolute right-4 top-4 z-[1500] w-[450px] max-w-[calc(100%-2rem)] bg-slate-900 border-2 border-slate-700 shadow-2xl rounded-xl text-sm flex flex-col overflow-hidden" style={{ maxHeight: 'calc(100% - 2rem)' }}>
       <div className="bg-gradient-to-r from-blue-900 to-slate-900 p-4 border-b border-slate-700 flex justify-between items-start shrink-0">
-        <div>
+        <div className="min-w-0">
           <h3 className="text-blue-400 font-black tracking-wider text-xs mb-1">
             {isCorridor ? "CORRIDOR INTELLIGENCE" : "AI DECISION SUPPORT"}
           </h3>
@@ -61,7 +65,7 @@ export const RecommendationPanel = ({
             <Zap size={18} className="text-yellow-400" />
             PENDING RECOMMENDATION
           </div>
-          <div className="text-slate-400 text-xs font-mono mt-1 opacity-50">
+          <div className="text-slate-400 text-xs font-mono mt-1 opacity-50 break-all">
             {rec.recommendation_id}
           </div>
         </div>
@@ -72,7 +76,7 @@ export const RecommendationPanel = ({
         )}
       </div>
 
-      <div className="p-4 space-y-5 flex-1 overflow-y-auto">
+      <div className="min-h-0 p-4 space-y-5 flex-1 overflow-y-auto overscroll-contain">
         {/* RATIONALE & WHY */}
         <div className="space-y-2">
           <div className="text-slate-400 text-xs font-bold tracking-wider">WHY THIS ALERT?</div>
@@ -150,19 +154,19 @@ export const RecommendationPanel = ({
       <div className="p-4 bg-slate-900 border-t border-slate-700 flex gap-3 shrink-0">
         <button
           onClick={() => handleAction('reject')}
-          disabled={loading !== null}
+          disabled={loading !== null || readOnly || !connected}
           className="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded border border-slate-600 transition disabled:opacity-50"
         >
           {loading === 'reject' ? 'REJECTING...' : 'REJECT'}
         </button>
         <button
           onClick={() => handleAction('approve')}
-          disabled={loading !== null}
+          disabled={loading !== null || readOnly || !connected}
           className="flex-[2] bg-blue-600 hover:bg-blue-500 text-white font-black py-3 rounded shadow-[0_0_15px_rgba(37,99,235,0.5)] transition disabled:opacity-50 flex items-center justify-center gap-2"
         >
-          {loading === 'approve' ? 'APPLYING...' : 'APPROVE & APPLY'}
+          {readOnly ? 'READ-ONLY SHOWCASE' : loading === 'approve' ? 'APPLYING...' : 'APPROVE & APPLY'}
         </button>
       </div>
-    </div>
+    </section>
   );
 };

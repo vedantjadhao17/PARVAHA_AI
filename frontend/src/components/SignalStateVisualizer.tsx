@@ -28,7 +28,7 @@ export const SignalStateVisualizer: React.FC<Props> = ({ rawState }) => {
 
   return (
     <div className="bg-navy-900 p-4 rounded border border-navy-border flex flex-col space-y-3">
-      <h4 className="text-sm font-semibold text-gray-400">Live Signal State</h4>
+      <h4 className="text-sm font-semibold text-gray-400">Simulated Signal State</h4>
       
       {/* Lights container */}
       <div className="flex flex-wrap gap-2 items-center">
