@@ -1,5 +1,7 @@
 name: Prototype checks
 on: [push, pull_request]
+permissions:
+  contents: read
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -18,3 +20,26 @@ jobs:
       - run: python scripts/benchmark.py
       - run: npm ci && npm run build
         working-directory: frontend
+      - run: VITE_DEMO_MODE=replay VITE_BASE_PATH=/PARVAHA_AI/ npm run build -- --outDir dist-replay
+        working-directory: frontend
+      - uses: actions/upload-pages-artifact@v3
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        with:
+          path: frontend/dist-replay
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy the verified replay
+        id: deployment
+        uses: actions/deploy-pages@v4

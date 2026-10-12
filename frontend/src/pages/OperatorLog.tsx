@@ -1,3 +1,4 @@
+import { apiFetch as fetch } from '../replay';
 import { useEffect, useState } from 'react';
 
 interface LogEntry {

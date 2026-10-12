@@ -1,3 +1,4 @@
+import { apiFetch as fetch } from '../replay';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useWebSocket } from '../context/WebSocketContext';
 import {

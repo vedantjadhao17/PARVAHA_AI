@@ -1,3 +1,4 @@
+import { apiFetch as fetch, isReplay } from '../replay';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { MapContainer, TileLayer, CircleMarker, Polyline, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -141,7 +142,7 @@ export const SimFeedPanel = ({
             SIMULATED FEED · SUMO
           </span>
           <span className="px-2 py-0.5 bg-status-green/20 text-status-green border border-status-green/30 text-[10px] font-bold rounded flex items-center gap-1.5">
-            LIVE
+            {isReplay ? 'REPLAY' : 'LIVE'}
           </span>
         </div>
 
@@ -205,7 +206,7 @@ export const SimFeedPanel = ({
               <div className="text-gray-400">{_junctionName} · Simulation view</div>
             </div>
             <div className="text-right flex flex-col items-end space-y-0.5">
-              <span>{connected ? 'Receiving telemetry' : 'Disconnected / stale'}</span>
+              <span>{isReplay ? 'Recorded telemetry' : connected ? 'Receiving telemetry' : 'Disconnected / stale'}</span>
               <span>Simulation time: {state?.time_s ?? 0}s</span>
             </div>
           </div>

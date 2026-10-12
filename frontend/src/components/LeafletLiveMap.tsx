@@ -1,3 +1,4 @@
+import { apiFetch as fetch } from '../replay';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   MapContainer,

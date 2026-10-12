@@ -1,3 +1,4 @@
+import { apiFetch as fetch, isReplay } from '../replay';
 import { useEffect, useState } from 'react';
 import { useWebSocket } from '../context/WebSocketContext';
 
@@ -29,6 +30,14 @@ export const SystemHealth = () => {
     ['60-second forecast model', health?.model_loaded ? 'XGBoost loaded' : 'Unavailable'],
     ['Backend uptime', health ? `${health.uptime_s}s` : 'Unavailable'],
   ];
+  if (isReplay) return <div className="p-6 space-y-4">
+    <h1 className="text-2xl font-bold">About this demo</h1>
+    <p>This is a recorded, read-only SUMO simulation, played back in your browser.</p>
+    <p>Vehicle positions, junction telemetry, and 60-second XGBoost forecasts were captured from a simulation run. The model and SUMO do not run in this browser.</p>
+    <p>No physical traffic lights, live city cameras, or live backend are connected. Signal recommendations and operator actions require the local backend.</p>
+    <p>Use Pause and the timeline to explore the 600-second scenario. Analytics shows recorded history up to the selected time.</p>
+    <a className="text-blue-400 underline" href="https://github.com/vedantjadhao17/PARVAHA_AI">Source code and local setup instructions</a>
+  </div>;
   return <div className="p-6 space-y-6">
     <h1 className="text-2xl font-bold">System Health</h1>
     <p className="text-gray-400">Status reported by the backend and telemetry connection. All traffic is simulated.</p>

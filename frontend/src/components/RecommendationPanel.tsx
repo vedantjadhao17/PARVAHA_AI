@@ -1,3 +1,4 @@
+import { apiFetch as fetch } from '../replay';
 import React, { useState } from 'react';
 import { useWebSocket } from '../context/WebSocketContext';
 import { AlertTriangle, Check, X, ShieldAlert, Zap, GitCommit } from 'lucide-react';

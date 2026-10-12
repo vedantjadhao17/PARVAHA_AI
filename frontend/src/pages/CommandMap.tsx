@@ -1,3 +1,4 @@
+import { apiFetch as fetch, isReplay } from '../replay';
 import { useState, useMemo, useEffect } from 'react';
 import { useWebSocket } from '../context/WebSocketContext';
 import {
@@ -253,7 +254,7 @@ const LiveJunctionThumb = ({
               : 'text-status-red'
           }`}
         >
-          {connected ? 'Online' : 'Offline'}
+          {isReplay ? 'Recorded' : connected ? 'Online' : 'Offline'}
         </span>
       </div>
     </div>
@@ -458,7 +459,7 @@ export const CommandMap = () => {
   // ─── Render ──────────────────────────────────────────────────────────────
 
   return (
-    <div className="relative isolate flex h-full w-full">
+    <div className="relative isolate flex flex-col md:flex-row min-h-full md:h-full w-full">
 
       {/* Realtime recommendation overlay */}
       {wsPendingRecommendations.length > 0 && (
@@ -472,7 +473,7 @@ export const CommandMap = () => {
 
       {/* ── Left: KPIs + Live Map + Summary ── */}
 
-      <div className="flex-1 p-4 flex flex-col space-y-3 overflow-y-auto min-w-0">
+      <div className="flex-none md:flex-1 p-4 flex flex-col space-y-3 overflow-y-auto min-w-0">
 
         {/* 1. Top KPI strip */}
 
@@ -508,7 +509,7 @@ export const CommandMap = () => {
             iconColor="text-status-green"
             sub={
               connected
-                ? 'All Online'
+                ? (isReplay ? 'Recorded states' : 'All Online')
                 : 'Offline'
             }
           />
@@ -703,7 +704,7 @@ export const CommandMap = () => {
 
       {/* ── Right: Detail panel ── */}
 
-      <div className="w-[420px] bg-navy-800 border-l border-navy-border flex flex-col overflow-hidden shrink-0">
+      <div className="w-full md:w-[420px] min-h-[500px] md:min-h-0 bg-navy-800 border-l border-navy-border flex flex-col overflow-hidden shrink-0">
 
         {selectedJunction ? (
 
@@ -1025,7 +1026,7 @@ export const CommandMap = () => {
             <div className="border-t border-navy-border p-4 bg-navy-900">
 
               <h5 className="text-xs uppercase text-gray-500 font-bold mb-3">
-                Camera Selector
+                Junction Views
               </h5>
 
               <div className="flex space-x-3 overflow-x-auto pb-1">

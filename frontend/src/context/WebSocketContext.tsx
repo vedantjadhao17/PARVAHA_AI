@@ -1,5 +1,7 @@
+import { apiFetch as fetch } from '../replay';
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
+import { isReplay, loadReplay, selectReplayFrame } from '../replay';
 
 export interface VehicleState {
   id: string;
@@ -36,15 +38,39 @@ interface Feed {
   state: CorridorState | null;
   connected: boolean;
   readOnly: boolean;
+  paused: boolean;
+  togglePause: () => void;
+  seek: (seconds: number) => void;
 }
-const WebSocketContext = createContext<Feed>({ state: null, connected: false, readOnly: true });
+const WebSocketContext = createContext<Feed>({ state: null, connected: false, readOnly: true, paused: false, togglePause: () => {}, seek: () => {} });
 
 export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
   const [state, setState] = useState<CorridorState | null>(null);
   const [connected, setConnected] = useState(false);
   const [readOnly, setReadOnly] = useState(true);
 
+  const [paused, setPaused] = useState(false);
+  const [replayIndex, setReplayIndex] = useState(120);
   useEffect(() => {
+    if (!isReplay) return;
+    let disposed = false;
+    loadReplay().then(bundle => {
+      if (disposed) return;
+      const index = replayIndex % bundle.frames.length;
+      selectReplayFrame(index);
+      setState(bundle.frames[index]);
+      setConnected(true);
+    }).catch(() => { if (!disposed) setConnected(false); });
+    return () => { disposed = true; };
+  }, [replayIndex]);
+  useEffect(() => {
+    if (!isReplay || paused) return;
+    const timer = setInterval(() => setReplayIndex(index => (index + 1) % 300), 1000);
+    return () => clearInterval(timer);
+  }, [paused]);
+
+  useEffect(() => {
+    if (isReplay) return;
     let disposed = false;
     let socket: WebSocket;
     let retry: ReturnType<typeof setTimeout>;
@@ -88,7 +114,10 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
-  return <WebSocketContext.Provider value={{ state, connected, readOnly }}>{children}</WebSocketContext.Provider>;
+  return <WebSocketContext.Provider value={{ state, connected, readOnly, paused,
+    togglePause: () => setPaused(value => !value),
+    seek: seconds => setReplayIndex(Math.max(0, Math.min(299, Math.round(seconds / 2) - 1))),
+  }}>{children}</WebSocketContext.Provider>;
 };
 
 export const useWebSocket = () => useContext(WebSocketContext);

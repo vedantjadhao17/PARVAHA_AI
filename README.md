@@ -4,6 +4,14 @@ A traffic-simulation prototype for exploring congestion at three connected junct
 
 **This is a simulation, not a deployed traffic-control system.** There is no live camera feed or connection to physical traffic lights. Real-world congestion reduction has not been validated.
 
+## Public browser demo
+
+[Explore the recorded simulation](https://vedantjadhao17.github.io/PARVAHA_AI/).
+
+The free public demo replays 600 seconds of genuine SUMO telemetry, sampled every two simulation seconds. It starts around the middle of the scenario and plays at 2× speed. Pause or scrub the timeline to inspect vehicle movement, queues, and recorded forecasts. No model inference, live simulation, or signal control runs in the browser.
+
+The local application below still runs the live SUMO simulation. See [the publishing workflow](docs/PUBLIC_DEMO.md) for how the two builds differ.
+
 ## What works
 
 - Live simulated vehicle positions, junction queues, speeds, and signal phases.

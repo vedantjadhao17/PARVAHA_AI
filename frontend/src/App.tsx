@@ -1,4 +1,6 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, HashRouter, Routes, Route, Link } from 'react-router-dom';
+import { isReplay } from './replay';
+const Router = isReplay ? HashRouter : BrowserRouter;
 import { WebSocketProvider, useWebSocket } from './context/WebSocketContext';
 import { LayoutDashboard, Bell, Activity, ActivitySquare, ShieldAlert, FileText } from 'lucide-react';
 
@@ -63,16 +65,30 @@ const Sidebar = () => {
 const Topbar = () => {
   const { connected } = useWebSocket();
   return (
-  <div className="h-10 border-b border-navy-border bg-navy-800 flex items-center justify-between px-4">
+  <div className="min-h-10 shrink-0 border-b border-navy-border bg-navy-800 flex flex-wrap gap-2 items-center justify-between px-4 py-2">
     <h1 className="text-base font-semibold text-white">PRAVAHA AI · Traffic Simulation</h1>
     <div className="flex items-center space-x-3">
       <div className="px-2 py-0.5 bg-slate-700 text-slate-100 text-[10px] font-bold rounded-full flex items-center space-x-1.5 uppercase tracking-wide">
-        <span>{connected ? 'SIMULATION CONNECTED' : 'CONNECTING / STALE'}</span>
+        <span>{isReplay ? (connected ? 'RECORDED REPLAY' : 'LOADING REPLAY') : connected ? 'SIMULATION CONNECTED' : 'CONNECTING / STALE'}</span>
       </div>
       <div className="text-xs text-gray-400">Research prototype</div>
     </div>
   </div>
   );
+};
+
+const ReplayControls = () => {
+  const { state, paused, togglePause, seek } = useWebSocket();
+  if (!isReplay) return null;
+  return <div className="px-4 py-2 bg-blue-950 border-b border-blue-800 text-xs space-y-2">
+    <p>Recorded SUMO simulation · 2× playback · Not live city traffic. Forecasts were computed during recording.</p>
+    <div className="flex items-center gap-3">
+      <button className="px-3 py-1 rounded bg-blue-700" onClick={togglePause}>{paused ? 'Play' : 'Pause'}</button>
+      <input aria-label="Replay simulation time" className="flex-1 min-w-0" type="range" min="2" max="600" step="2" value={state?.time_s ?? 242} onChange={e => seek(Number(e.target.value))} />
+      <span className="w-16">{state?.time_s ?? 0}s / 600s</span>
+      <a className="underline" href="https://github.com/vedantjadhao17/PARVAHA_AI" target="_blank" rel="noreferrer">Code</a>
+    </div>
+  </div>;
 };
 
 function App() {
@@ -83,6 +99,7 @@ function App() {
           <Sidebar />
           <div className="flex-1 flex flex-col min-w-0">
             <Topbar />
+            <ReplayControls />
             <main className="flex-1 overflow-auto">
               <Routes>
                 <Route path="/" element={<CommandMap />} />
